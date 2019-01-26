@@ -71,10 +71,10 @@ extension ViewController {
         mapView.addOverlay(mkPoly)
         mapOverlays = mapView.overlays
 
-        let pt = Point([-73.99643342179832, 40.63328912259067])
+        let pt1 = Point([-73.99643342179832, 40.63328912259067])
         let pt2 = Point([-74.01643342179832, 40.63328912259067])
 
-        let points = [pt, pt2]
+        let points = [pt1, pt2]
         mapView.loadPointsAsAnnotations(points)
         mapAnnotations = mapView.annotations
     }
@@ -82,8 +82,8 @@ extension ViewController {
     @IBAction func loadNYCNeighborhoodsButtonTapped(_ sender: Any) {
         resetMap()
 
-        guard let featureCollection = try? GeoJsonUtils.readFeatureCollectionFrom(file: "nyc_neighborhoods",
-                                                                                  withExtension: "geojson") else { return }
+        // swiftlint:disable line_length
+        guard let featureCollection = try? GeoJsonUtils.readFeatureCollectionFrom(file: "nyc_neighborhoods", withExtension: "geojson") else { return }
         mapView.loadFeatureCollection(featureCollection)
         mapOverlays = mapView.overlays
     }

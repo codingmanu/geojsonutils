@@ -12,7 +12,10 @@ class GeoJsonUtils {
 
     static func readFeatureCollectionFrom(file: String, withExtension: String) throws -> FeatureCollection {
 
-        let bundlefile = Bundle.main.url(forResource: file, withExtension: withExtension)!
+        guard let bundlefile = Bundle.main.url(forResource: file, withExtension: withExtension) else {
+            throw GeoJsonObjectError.invalidFeatureCollection
+        }
+        
         let data = try? Data(contentsOf: bundlefile)
 
         let decoder = JSONDecoder()

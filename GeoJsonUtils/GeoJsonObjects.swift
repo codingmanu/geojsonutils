@@ -16,6 +16,7 @@ enum GeoJSONObjectType: String, Decodable {
 
 enum FeatureCodingKeys: String, CodingKey {
     case type
+    case id
     case properties
     case geometry
 }
@@ -38,6 +39,7 @@ enum GeoJsonObjectError: Error {
 // MARK: - Models for Feature & FeatureCollection
 struct Feature: Decodable {
     var type: GeoJSONObjectType = .feature
+    var id: Any?
     var properties: [String: Any]
     var geometryType: GeometryType
     var geometry: Decodable
@@ -45,6 +47,10 @@ struct Feature: Decodable {
     init(from decoder: Decoder) throws {
 
         let container = try decoder.container(keyedBy: FeatureCodingKeys.self)
+
+        id = try? container.decode(String.self, forKey: .id)
+        id = try? container.decode(Double.self, forKey: .id)
+
         properties = try container.decode(Dictionary<String, Any>.self, forKey: .properties)
 
         let geometryContainer = try container.nestedContainer(keyedBy: GeometryCodingKeys.self, forKey: .geometry)

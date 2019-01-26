@@ -31,20 +31,13 @@ extension MKMapView {
 
             switch feature.geometryType {
             case .point:
-                guard let point = feature.geometry as? Point else { return }
-                self.addAnnotation(point.asMKPointAnnotation())
+                self.loadPointFeatureAsAnnotation(feature)
             case .lineString:
-                guard let line = feature.geometry as? LineString else { return }
-                self.addAnnotation(line.asMKPolyLine())
+                self.loadLineStringFeatureAsOverlay(feature)
             case .polygon:
-                guard let polygon = feature.geometry as? Polygon else { return }
-                self.addOverlay(polygon.asMKPolygon())
+                self.loadPolygonFeatureAsOverlay(feature)
             case .multiPolygon:
-                guard let multiPolygon = feature.geometry as? MultiPolygon else { return }
-                for polygon in multiPolygon.getPolygons() {
-                    let mkPoly = polygon.asMKPolygon()
-                    self.addOverlay(mkPoly)
-                }
+                self.loadMultiPolygonFeatureAsOverlay(feature)
             default:
                 return
             }
@@ -54,6 +47,84 @@ extension MKMapView {
     func loadPointsAsAnnotations(_ points: [Point]) {
         for point in points {
             self.addAnnotation(point.asMKPointAnnotation())
+        }
+    }
+
+    func loadPointFeatureAsAnnotation(_ feature: Feature) {
+        if feature.geometryType == .point {
+            guard let point = feature.geometry as? Point else { return }
+
+            let anno = MKPointAnnotation()
+            anno.coordinate = point.asCLLocationCoordinate2D()
+
+            if feature.id != nil {
+                if let titleString = feature.id as? String {
+                    anno.title = titleString
+                }
+
+                if let titleDouble = feature.id as? Double {
+                    anno.title = String(titleDouble)
+                }
+            }
+
+            self.addAnnotation(anno)
+        }
+    }
+
+    func loadLineStringFeatureAsOverlay(_ feature: Feature) {
+        if feature.geometryType == .lineString {
+            guard let line = feature.geometry as? LineString else { return }
+            let overlay = line.asMKPolyLine()
+
+            if feature.id != nil {
+                if let titleString = feature.id as? String {
+                    overlay.title = titleString
+                }
+
+                if let titleDouble = feature.id as? Double {
+                    overlay.title = String(titleDouble)
+                }
+            }
+
+            self.addOverlay(overlay)
+        }
+    }
+
+    func loadPolygonFeatureAsOverlay(_ feature: Feature) {
+        if feature.geometryType == .polygon {
+            guard let polygon = feature.geometry as? Polygon else { return }
+            let overlay = polygon.asMKPolygon()
+
+            if feature.id != nil {
+                if let titleString = feature.id as? String {
+                    overlay.title = titleString
+                }
+
+                if let titleDouble = feature.id as? Double {
+                    overlay.title = String(titleDouble)
+                }
+            }
+
+            self.addOverlay(overlay)
+        }
+    }
+
+    func loadMultiPolygonFeatureAsOverlay(_ feature: Feature){
+        if feature.geometryType == .multiPolygon {
+            guard let multiPolygon = feature.geometry as? MultiPolygon else { return }
+            for polygon in multiPolygon.getPolygons() {
+                let overlay = polygon.asMKPolygon()
+
+                if feature.id != nil {
+                    if let titleString = feature.id as? String {
+                        overlay.title = titleString
+                    }
+
+                    if let titleDouble = feature.id as? Double {
+                        overlay.title = String(titleDouble)
+                    }
+                }
+            }
         }
     }
 }

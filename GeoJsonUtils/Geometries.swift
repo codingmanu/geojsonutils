@@ -23,6 +23,7 @@ enum GeometryType: String, Decodable {
 enum GeometryError: Error {
     case invalidType
     case invalidGeometry
+    case indalidId
 }
 
 enum GeometryCodingKeys: String, CodingKey {
@@ -69,6 +70,7 @@ struct MultiPolygon: Decodable {
 
 // MARK: - Extensions
 extension Point {
+
     func asCLLocationCoordinate2D() -> CLLocationCoordinate2D {
         let lat = coordinates[1]
         let lon = coordinates[0]
@@ -152,7 +154,6 @@ extension Polygon {
 
         return mkPoly
     }
-
 }
 
 extension MultiPolygon {
