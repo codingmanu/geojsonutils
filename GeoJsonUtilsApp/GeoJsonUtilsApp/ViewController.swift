@@ -27,6 +27,9 @@ class ViewController: UIViewController, MKMapViewDelegate {
         mapView.mapType = MKMapType.mutedStandard
         mapView.showsScale = true
         mapView.setRegion(viewRegion, animated: true)
+
+        let tap = UITapGestureRecognizer(target: self, action: #selector(didTapOnMap(_:)))
+        mapView.addGestureRecognizer(tap)
     }
 
     func resetMap() {
@@ -83,7 +86,7 @@ extension ViewController {
         resetMap()
 
         // swiftlint:disable line_length
-        guard let featureCollection = try? GeoJsonUtils.readFeatureCollectionFrom(file: "nyc_neighborhoods", withExtension: "geojson") else { return }
+        guard let featureCollection = try? GeoJsonUtils.readFeatureCollectionFrom(file: "bids", withExtension: "geojson") else { return }
         mapView.loadFeatureCollection(featureCollection)
         mapOverlays = mapView.overlays
     }
@@ -134,7 +137,7 @@ extension ViewController {
             alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
 
             self.present(alert, animated: true, completion: {
-                view.setSelected(false, animated: true)
+                mapView.deselectAnnotation(view.annotation, animated: true)
             })
 
         } else {
@@ -145,8 +148,44 @@ extension ViewController {
             alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
 
             self.present(alert, animated: true, completion: {
-                view.setSelected(false, animated: true)
+                mapView.deselectAnnotation(view.annotation, animated: true)
             })
+        }
+    }
+
+    @objc func didTapOnMap(_ sender: UITapGestureRecognizer) {
+        let point = sender.location(in: mapView)
+        let coordinate = mapView.convert(point, toCoordinateFrom: mapView)
+
+        let rect = mapView.squareAroundCoordinate(coordinate, withScaleFactor: 0.15)
+
+        if mapView.annotations(in: rect).count == 0 {
+            let polygons: [MKPolygon] = mapView.overlays.filter { (overlay) -> Bool in
+                overlay is MKPolygon
+                } as! [MKPolygon]
+            // swiftlint:disable:previous force_cast
+
+            for polygon in polygons {
+                if polygon.containsPoint(coordinate) {
+                    if polygon.title != nil {
+                        let alert = UIAlertController(title: "Polygon",
+                                                      message: "ID: \(polygon.title!)",
+                            preferredStyle: UIAlertController.Style.alert)
+
+                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+
+                        self.present(alert, animated: true, completion: nil)
+                    } else {
+                        let alert = UIAlertController(title: "Polygon",
+                                                      message: "ID not available",
+                                                      preferredStyle: UIAlertController.Style.alert)
+
+                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+
+                        self.present(alert, animated: true, completion: nil)
+                    }
+                }
+            }
         }
     }
 }

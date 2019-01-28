@@ -32,7 +32,7 @@ enum GeometryCodingKeys: String, CodingKey {
 }
 
 // MARK: - Models
-struct Point: Decodable {
+class Point: Decodable {
     var type: GeometryType = .point
     var coordinates: [Double]
 
@@ -41,7 +41,7 @@ struct Point: Decodable {
     }
 }
 
-struct LineString: Decodable {
+class LineString: Decodable {
     var type: GeometryType = .lineString
     var coordinates: [[Double]]
 
@@ -50,7 +50,7 @@ struct LineString: Decodable {
     }
 }
 
-struct Polygon: Decodable {
+class Polygon: Decodable {
     var type: GeometryType = .polygon
     var coordinates: [[[Double]]]
 
@@ -59,7 +59,7 @@ struct Polygon: Decodable {
     }
 }
 
-struct MultiPolygon: Decodable {
+class MultiPolygon: Decodable {
     var type: GeometryType = .multiPolygon
     var coordinates: [[[[Double]]]]
 
@@ -71,7 +71,7 @@ struct MultiPolygon: Decodable {
 // MARK: - Extensions
 extension Point {
 
-    func asCLLocationCoordinate2D() -> CLLocationCoordinate2D {
+    private func asCLLocationCoordinate2D() -> CLLocationCoordinate2D {
         let lat = coordinates[1]
         let lon = coordinates[0]
 
@@ -87,7 +87,7 @@ extension Point {
 
 extension LineString {
 
-    func getPoints() -> [Point] {
+    private func getPoints() -> [Point] {
         let points = coordinates.map { (coordinate) -> Point in
             return Point(coordinate)
         }
@@ -96,8 +96,8 @@ extension LineString {
 
     func asMKPolyLine() -> MKPolyline {
 
-        let coords = self.getPoints().map({ (point) -> CLLocationCoordinate2D in
-            return point.asCLLocationCoordinate2D()
+        let coords = self.getPoints().compactMap({ (point) -> CLLocationCoordinate2D in
+            return point.asMKPointAnnotation().coordinate
         })
 
         return MKPolyline(coordinates: coords, count: coords.count)
@@ -106,11 +106,11 @@ extension LineString {
 
 extension Polygon {
 
-    func getOuterRing() -> LineString {
+    private func getOuterRing() -> LineString {
         return LineString(coordinates[0])
     }
 
-    func getInnerRings() -> [LineString] {
+    private func getInnerRings() -> [LineString] {
         var innerRings: [LineString] = []
         if coordinates.count > 1 {
             for ring in coordinates[1...] {
@@ -121,15 +121,12 @@ extension Polygon {
     }
 
     func asMKPolygon() -> MKPolygon {
-        var outerPolygonPoints = [Point]()
+        var outerPolygonPoints = [CLLocationCoordinate2D]()
 
         let outerRing = self.getOuterRing()
-        outerRing.coordinates.forEach { (point) in
-            outerPolygonPoints.append(Point(point))
-        }
-
-        let outerCoordinates = outerPolygonPoints.map { (point) -> CLLocationCoordinate2D in
-            return point.asCLLocationCoordinate2D()
+        for point in UnsafeBufferPointer(start: outerRing.asMKPolyLine().points(),
+                                         count: outerRing.asMKPolyLine().pointCount) {
+                                            outerPolygonPoints.append(point.coordinate)
         }
 
         var innerPolygons = [MKPolygon]()
@@ -137,19 +134,18 @@ extension Polygon {
         let innerRings = self.getInnerRings()
         if innerRings.count > 0 {
             for innerRing in innerRings {
-                var innerPolygonPoints = [Point]()
-                innerRing.getPoints().forEach({ (point) in
-                    innerPolygonPoints.append(point)
-                })
-                let innerCoordinates = innerPolygonPoints.map { (point) -> CLLocationCoordinate2D in
-                    return point.asCLLocationCoordinate2D()
+                var innerPolygonPoints = [CLLocationCoordinate2D]()
+                for point in UnsafeBufferPointer(start: innerRing.asMKPolyLine().points(),
+                                                 count: innerRing.asMKPolyLine().pointCount) {
+                                                    innerPolygonPoints.append(point.coordinate)
                 }
-                innerPolygons.append(MKPolygon(coordinates: innerCoordinates, count: innerCoordinates.count))
+
+                innerPolygons.append(MKPolygon(coordinates: innerPolygonPoints, count: innerPolygonPoints.count))
             }
         }
 
-        let mkPoly = MKPolygon(coordinates: outerCoordinates,
-                               count: outerCoordinates.count,
+        let mkPoly = MKPolygon(coordinates: outerPolygonPoints,
+                               count: outerPolygonPoints.count,
                                interiorPolygons: innerPolygons)
 
         return mkPoly

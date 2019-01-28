@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import MapKit
 
 // MARK: - Coding Keys
 enum GeoJSONObjectType: String, Decodable {
@@ -39,33 +40,62 @@ enum GeoJsonObjectError: Error {
 // MARK: - Models for Feature & FeatureCollection
 struct Feature: Decodable {
     var type: GeoJSONObjectType = .feature
-    var id: Any?
+    var id: String?
     var properties: [String: Any]
     var geometryType: GeometryType
     var geometry: Decodable
+    var mkGeometry: MKShape?
+    var multiMkGeometry: [MKShape]?
 
     init(from decoder: Decoder) throws {
 
         let container = try decoder.container(keyedBy: FeatureCodingKeys.self)
 
-        id = try? container.decode(String.self, forKey: .id)
-        id = try? container.decode(Double.self, forKey: .id)
+        if let value = try? container.decode(Double.self, forKey: .id) {
+            id = String(value)
+        } else {
+            id = try? container.decode(String.self, forKey: .id)
+        }
 
         properties = try container.decode(Dictionary<String, Any>.self, forKey: .properties)
 
         let geometryContainer = try container.nestedContainer(keyedBy: GeometryCodingKeys.self, forKey: .geometry)
         geometryType = try geometryContainer.decode(GeometryType.self, forKey: .type)
 
-        // Overwrites the `geometry` property with one of the possible classes
+        // Decodes the `geometry` property with one of the possible classes
         switch geometryType {
         case .point:
-            self.geometry = try container.decode(Point.self, forKey: .geometry)
+            let point: Point = try container.decode(Point.self, forKey: .geometry)
+            self.geometry = point
+            mkGeometry = point.asMKPointAnnotation()
+            if id != nil {
+                mkGeometry?.title = id
+            }
         case .lineString:
-            self.geometry = try container.decode(LineString.self, forKey: .geometry)
+            let line = try container.decode(LineString.self, forKey: .geometry)
+            self.geometry = line
+            mkGeometry = line.asMKPolyLine()
+            if id != nil {
+                mkGeometry?.title = id
+            }
         case .polygon:
-            self.geometry = try container.decode(Polygon.self, forKey: .geometry)
+            let polygon = try container.decode(Polygon.self, forKey: .geometry)
+            self.geometry = polygon
+            mkGeometry = polygon.asMKPolygon()
+            if id != nil {
+                mkGeometry?.title = id
+            }
         case .multiPolygon:
-            self.geometry = try container.decode(MultiPolygon.self, forKey: .geometry)
+            let multiPolygon = try container.decode(MultiPolygon.self, forKey: .geometry)
+            self.geometry = multiPolygon
+
+            for polygon in multiPolygon.getPolygons() {
+                let mkPolygon = polygon.asMKPolygon()
+                if id != nil {
+                    mkPolygon.title = id
+                }
+                multiMkGeometry?.append(mkPolygon)
+            }
         default:
             throw GeometryError.invalidType
         }

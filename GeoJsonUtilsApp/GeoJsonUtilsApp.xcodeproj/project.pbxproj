@@ -23,7 +23,7 @@
 		8026726621F9855600F79328 /* polygon.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 8026726021F9855600F79328 /* polygon.geojson */; };
 		8026726721F9855600F79328 /* lineString.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 8026726121F9855600F79328 /* lineString.geojson */; };
 		8026726821F9855600F79328 /* feature.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 8026726221F9855600F79328 /* feature.geojson */; };
-		8054D15821FCBF4200211E72 /* bids.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 8054D15721FCBF4200211E72 /* bids.geojson */; };
+		8054D15A21FE36EA00211E72 /* bids.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 8054D15921FE36EA00211E72 /* bids.geojson */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,7 +45,7 @@
 		8026726021F9855600F79328 /* polygon.geojson */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = polygon.geojson; sourceTree = "<group>"; };
 		8026726121F9855600F79328 /* lineString.geojson */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lineString.geojson; sourceTree = "<group>"; };
 		8026726221F9855600F79328 /* feature.geojson */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = feature.geojson; sourceTree = "<group>"; };
-		8054D15721FCBF4200211E72 /* bids.geojson */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bids.geojson; sourceTree = "<group>"; };
+		8054D15921FE36EA00211E72 /* bids.geojson */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bids.geojson; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,7 +106,7 @@
 		8026725C21F9855500F79328 /* Sample Files */ = {
 			isa = PBXGroup;
 			children = (
-				8054D15721FCBF4200211E72 /* bids.geojson */,
+				8054D15921FE36EA00211E72 /* bids.geojson */,
 				8026725D21F9855600F79328 /* nyc_neighborhoods.geojson */,
 				8026725E21F9855600F79328 /* multiPolygon.geojson */,
 				8026725F21F9855600F79328 /* point.geojson */,
@@ -182,7 +182,7 @@
 				8026726621F9855600F79328 /* polygon.geojson in Resources */,
 				8026724921F97F3E00F79328 /* LaunchScreen.storyboard in Resources */,
 				8026726721F9855600F79328 /* lineString.geojson in Resources */,
-				8054D15821FCBF4200211E72 /* bids.geojson in Resources */,
+				8054D15A21FE36EA00211E72 /* bids.geojson in Resources */,
 				8026724621F97F3E00F79328 /* Assets.xcassets in Resources */,
 				8026726521F9855600F79328 /* point.geojson in Resources */,
 				8026724421F97F3E00F79328 /* Main.storyboard in Resources */,
