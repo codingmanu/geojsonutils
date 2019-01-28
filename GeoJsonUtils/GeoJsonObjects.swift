@@ -35,6 +35,7 @@ enum GeoJsonObjectError: Error {
     case invalidProperties
     case invalidGeometry
     case invalidFeatures
+    case invalidPropertyKey
 }
 
 // MARK: - Models for Feature & FeatureCollection
@@ -89,6 +90,8 @@ struct Feature: Decodable {
             let multiPolygon = try container.decode(MultiPolygon.self, forKey: .geometry)
             self.geometry = multiPolygon
 
+            multiMkGeometry = [MKShape]()
+
             for polygon in multiPolygon.getPolygons() {
                 let mkPolygon = polygon.asMKPolygon()
                 if id != nil {
@@ -116,4 +119,47 @@ class FeatureCollection: Decodable {
         features = try container.decode([Feature].self, forKey: .features)
     }
 
+}
+
+extension Feature {
+
+    func updateIdFromProperty(forKey key: String) throws {
+        var value = id
+        if let doubleValue = properties[key] as? Double {
+            value = String(doubleValue)
+        } else if let stringValue = properties[key] as? String {
+            value = stringValue
+        } else {
+            throw GeoJsonObjectError.invalidPropertyKey
+        }
+
+        switch geometryType {
+        case .point:
+            let anno = mkGeometry as? MKPointAnnotation
+            if anno != nil {
+                anno!.title = value
+            }
+        case .lineString:
+            let overlay = mkGeometry as? MKPolyline
+            if overlay != nil {
+                overlay!.title = value
+            }
+        case .polygon:
+            let overlay = mkGeometry as? MKPolygon
+            if overlay != nil {
+                overlay!.title = value
+            }
+        case .multiPolygon:
+            if multiMkGeometry != nil {
+                for geometry in multiMkGeometry! {
+                    let overlay = geometry as? MKPolygon
+                    if overlay != nil {
+                        overlay!.title = value
+                    }
+                }
+            }
+        default:
+            break
+        }
+    }
 }

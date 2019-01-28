@@ -86,7 +86,12 @@ extension ViewController {
         resetMap()
 
         // swiftlint:disable line_length
-        guard let featureCollection = try? GeoJsonUtils.readFeatureCollectionFrom(file: "bids", withExtension: "geojson") else { return }
+        guard let featureCollection = try? GeoJsonUtils.readFeatureCollectionFrom(file: "nyc_neighborhoods", withExtension: "geojson") else { return }
+
+        for feature in featureCollection.features {
+            try? feature.updateIdFromProperty(forKey: "ntaname")
+        }
+
         mapView.loadFeatureCollection(featureCollection)
         mapOverlays = mapView.overlays
     }
@@ -168,17 +173,9 @@ extension ViewController {
             for polygon in polygons {
                 if polygon.containsPoint(coordinate) {
                     if polygon.title != nil {
-                        let alert = UIAlertController(title: "Polygon",
-                                                      message: "ID: \(polygon.title!)",
+                        let alert = UIAlertController(title: "Neighborhood",
+                                                      message: "\n\(polygon.title!)\n",
                             preferredStyle: UIAlertController.Style.alert)
-
-                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
-
-                        self.present(alert, animated: true, completion: nil)
-                    } else {
-                        let alert = UIAlertController(title: "Polygon",
-                                                      message: "ID not available",
-                                                      preferredStyle: UIAlertController.Style.alert)
 
                         alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
 
