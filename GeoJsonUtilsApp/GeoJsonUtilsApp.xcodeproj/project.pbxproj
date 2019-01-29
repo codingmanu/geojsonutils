@@ -23,8 +23,19 @@
 		8026726621F9855600F79328 /* polygon.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 8026726021F9855600F79328 /* polygon.geojson */; };
 		8026726721F9855600F79328 /* lineString.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 8026726121F9855600F79328 /* lineString.geojson */; };
 		8026726821F9855600F79328 /* feature.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 8026726221F9855600F79328 /* feature.geojson */; };
+		803E504F21FF6C4F00699E12 /* GeoJsonUtilsAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 803E504E21FF6C4F00699E12 /* GeoJsonUtilsAppTests.swift */; };
 		8054D15A21FE36EA00211E72 /* bids.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 8054D15921FE36EA00211E72 /* bids.geojson */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		803E505121FF6C4F00699E12 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8026723321F97F3E00F79328 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8026723A21F97F3E00F79328;
+			remoteInfo = GeoJsonUtilsApp;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		8026723B21F97F3E00F79328 /* GeoJsonUtilsApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GeoJsonUtilsApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -45,11 +56,21 @@
 		8026726021F9855600F79328 /* polygon.geojson */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = polygon.geojson; sourceTree = "<group>"; };
 		8026726121F9855600F79328 /* lineString.geojson */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lineString.geojson; sourceTree = "<group>"; };
 		8026726221F9855600F79328 /* feature.geojson */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = feature.geojson; sourceTree = "<group>"; };
+		803E504C21FF6C4F00699E12 /* GeoJsonUtilsAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GeoJsonUtilsAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		803E504E21FF6C4F00699E12 /* GeoJsonUtilsAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoJsonUtilsAppTests.swift; sourceTree = "<group>"; };
+		803E505021FF6C4F00699E12 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8054D15921FE36EA00211E72 /* bids.geojson */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bids.geojson; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		8026723821F97F3E00F79328 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		803E504921FF6C4F00699E12 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -63,6 +84,7 @@
 			isa = PBXGroup;
 			children = (
 				8026723D21F97F3E00F79328 /* GeoJsonUtilsApp */,
+				803E504D21FF6C4F00699E12 /* GeoJsonUtilsAppTests */,
 				8026723C21F97F3E00F79328 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -71,6 +93,7 @@
 			isa = PBXGroup;
 			children = (
 				8026723B21F97F3E00F79328 /* GeoJsonUtilsApp.app */,
+				803E504C21FF6C4F00699E12 /* GeoJsonUtilsAppTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -118,6 +141,15 @@
 			path = "../../Sample Files";
 			sourceTree = "<group>";
 		};
+		803E504D21FF6C4F00699E12 /* GeoJsonUtilsAppTests */ = {
+			isa = PBXGroup;
+			children = (
+				803E504E21FF6C4F00699E12 /* GeoJsonUtilsAppTests.swift */,
+				803E505021FF6C4F00699E12 /* Info.plist */,
+			);
+			path = GeoJsonUtilsAppTests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -139,6 +171,24 @@
 			productReference = 8026723B21F97F3E00F79328 /* GeoJsonUtilsApp.app */;
 			productType = "com.apple.product-type.application";
 		};
+		803E504B21FF6C4F00699E12 /* GeoJsonUtilsAppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 803E505521FF6C4F00699E12 /* Build configuration list for PBXNativeTarget "GeoJsonUtilsAppTests" */;
+			buildPhases = (
+				803E504821FF6C4F00699E12 /* Sources */,
+				803E504921FF6C4F00699E12 /* Frameworks */,
+				803E504A21FF6C4F00699E12 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				803E505221FF6C4F00699E12 /* PBXTargetDependency */,
+			);
+			name = GeoJsonUtilsAppTests;
+			productName = GeoJsonUtilsAppTests;
+			productReference = 803E504C21FF6C4F00699E12 /* GeoJsonUtilsAppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -151,6 +201,10 @@
 				TargetAttributes = {
 					8026723A21F97F3E00F79328 = {
 						CreatedOnToolsVersion = 10.1;
+					};
+					803E504B21FF6C4F00699E12 = {
+						CreatedOnToolsVersion = 10.1;
+						TestTargetID = 8026723A21F97F3E00F79328;
 					};
 				};
 			};
@@ -168,6 +222,7 @@
 			projectRoot = "";
 			targets = (
 				8026723A21F97F3E00F79328 /* GeoJsonUtilsApp */,
+				803E504B21FF6C4F00699E12 /* GeoJsonUtilsAppTests */,
 			);
 		};
 /* End PBXProject section */
@@ -187,6 +242,13 @@
 				8026726521F9855600F79328 /* point.geojson in Resources */,
 				8026724421F97F3E00F79328 /* Main.storyboard in Resources */,
 				8026726821F9855600F79328 /* feature.geojson in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		803E504A21FF6C4F00699E12 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -227,7 +289,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		803E504821FF6C4F00699E12 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				803E504F21FF6C4F00699E12 /* GeoJsonUtilsAppTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		803E505221FF6C4F00699E12 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8026723A21F97F3E00F79328 /* GeoJsonUtilsApp */;
+			targetProxy = 803E505121FF6C4F00699E12 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		8026724221F97F3E00F79328 /* Main.storyboard */ = {
@@ -401,6 +479,46 @@
 			};
 			name = Release;
 		};
+		803E505321FF6C4F00699E12 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 8LV266D828;
+				INFOPLIST_FILE = GeoJsonUtilsAppTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.codingManu.GeoJsonUtilsAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GeoJsonUtilsApp.app/GeoJsonUtilsApp";
+			};
+			name = Debug;
+		};
+		803E505421FF6C4F00699E12 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 8LV266D828;
+				INFOPLIST_FILE = GeoJsonUtilsAppTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.codingManu.GeoJsonUtilsAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GeoJsonUtilsApp.app/GeoJsonUtilsApp";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -418,6 +536,15 @@
 			buildConfigurations = (
 				8026724E21F97F3E00F79328 /* Debug */,
 				8026724F21F97F3E00F79328 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		803E505521FF6C4F00699E12 /* Build configuration list for PBXNativeTarget "GeoJsonUtilsAppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				803E505321FF6C4F00699E12 /* Debug */,
+				803E505421FF6C4F00699E12 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
