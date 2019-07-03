@@ -25,7 +25,7 @@ class GeoJsonUtilsAppTests: XCTestCase {
         let bundlefile = Bundle.main.url(forResource: "point", withExtension: "geojson")!
         let data = try? Data(contentsOf: bundlefile)
         let decoder = JSONDecoder()
-        let decodedData = try? decoder.decode(Point.self, from: data!)
+        let decodedData = try? decoder.decode(GJPoint.self, from: data!)
 
         guard let point = decodedData else { return }
 
@@ -42,7 +42,7 @@ class GeoJsonUtilsAppTests: XCTestCase {
         let bundlefile = Bundle.main.url(forResource: "lineString", withExtension: "geojson")!
         let data = try? Data(contentsOf: bundlefile)
         let decoder = JSONDecoder()
-        let decodedData = try? decoder.decode(LineString.self, from: data!)
+        let decodedData = try? decoder.decode(GJLineString.self, from: data!)
 
         guard let line = decodedData else { return }
 
@@ -69,7 +69,7 @@ class GeoJsonUtilsAppTests: XCTestCase {
         let bundlefile = Bundle.main.url(forResource: "polygon", withExtension: "geojson")!
         let data = try? Data(contentsOf: bundlefile)
         let decoder = JSONDecoder()
-        let decodedData = try? decoder.decode(Polygon.self, from: data!)
+        let decodedData = try? decoder.decode(GJPolygon.self, from: data!)
 
         guard let polygon = decodedData else { return }
 

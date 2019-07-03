@@ -9,26 +9,27 @@
 import Foundation
 import MapKit
 
-// MARK: - Coding Keys
-enum GeoJSONObjectType: String, Decodable {
+// MARK: - GeoJSON Object Type: Feature or FeatureCollection
+enum GJObjectType: String, Codable {
     case feature = "Feature"
     case featureCollection = "FeatureCollection"
 }
 
-enum FeatureCodingKeys: String, CodingKey {
+// MARK: - Coding Keys
+enum GJFeatureCodingKeys: String, CodingKey {
     case type
     case id
     case properties
     case geometry
 }
 
-enum FeatureCollectionCodingKeys: String, CodingKey {
+enum GJFeatureCollectionCodingKeys: String, CodingKey {
     case type
     case properties
     case features
 }
 
-enum GeoJsonObjectError: Error {
+enum GJObjectError: Error {
     case invalidFeature
     case invalidFeatureCollection
     case invalidType
@@ -39,18 +40,18 @@ enum GeoJsonObjectError: Error {
 }
 
 // MARK: - Models for Feature & FeatureCollection
-struct Feature: Decodable {
-    var type: GeoJSONObjectType = .feature
+struct GJFeature: Decodable {
+    var type: GJObjectType = .feature
     var id: String?
     var properties: [String: Any]
-    var geometryType: GeometryType
+    var geometryType: GJGeometryType
     var geometry: Decodable
     var mkGeometry: MKShape?
     var multiMkGeometry: [MKShape]?
 
     init(from decoder: Decoder) throws {
 
-        let container = try decoder.container(keyedBy: FeatureCodingKeys.self)
+        let container = try decoder.container(keyedBy: GJFeatureCodingKeys.self)
 
         if let value = try? container.decode(Double.self, forKey: .id) {
             id = String(value)
@@ -60,34 +61,34 @@ struct Feature: Decodable {
 
         properties = try container.decode(Dictionary<String, Any>.self, forKey: .properties)
 
-        let geometryContainer = try container.nestedContainer(keyedBy: GeometryCodingKeys.self, forKey: .geometry)
-        geometryType = try geometryContainer.decode(GeometryType.self, forKey: .type)
+        let geometryContainer = try container.nestedContainer(keyedBy: GJGeometryCodingKeys.self, forKey: .geometry)
+        geometryType = try geometryContainer.decode(GJGeometryType.self, forKey: .type)
 
         // Decodes the `geometry` property with one of the possible classes
         switch geometryType {
         case .point:
-            let point: Point = try container.decode(Point.self, forKey: .geometry)
+            let point: GJPoint = try container.decode(GJPoint.self, forKey: .geometry)
             self.geometry = point
             mkGeometry = point.asMKPointAnnotation()
             if id != nil {
                 mkGeometry?.title = id
             }
         case .lineString:
-            let line = try container.decode(LineString.self, forKey: .geometry)
+            let line = try container.decode(GJLineString.self, forKey: .geometry)
             self.geometry = line
             mkGeometry = line.asMKPolyLine()
             if id != nil {
                 mkGeometry?.title = id
             }
         case .polygon:
-            let polygon = try container.decode(Polygon.self, forKey: .geometry)
+            let polygon = try container.decode(GJPolygon.self, forKey: .geometry)
             self.geometry = polygon
             mkGeometry = polygon.asMKPolygon()
             if id != nil {
                 mkGeometry?.title = id
             }
         case .multiPolygon:
-            let multiPolygon = try container.decode(MultiPolygon.self, forKey: .geometry)
+            let multiPolygon = try container.decode(GJMultiPolygon.self, forKey: .geometry)
             self.geometry = multiPolygon
 
             multiMkGeometry = [MKShape]()
@@ -100,29 +101,34 @@ struct Feature: Decodable {
                 multiMkGeometry?.append(mkPolygon)
             }
         default:
-            throw GeometryError.invalidType
+            throw GJGeometryError.invalidType
         }
     }
 }
 
-class FeatureCollection: Decodable {
-    var type: GeoJSONObjectType = .featureCollection
-    var features: [Feature]
+class GJFeatureCollection: Decodable {
+    var type: GJObjectType = .featureCollection
+    var features: [GJFeature]
 
-    init(_ features: [Feature]) {
+    init(_ features: [GJFeature]) {
         self.features = features
     }
 
     required init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: FeatureCollectionCodingKeys.self)
-        type = try container.decode(GeoJSONObjectType.self, forKey: .type)
-        features = try container.decode([Feature].self, forKey: .features)
+        let container = try decoder.container(keyedBy: GJFeatureCollectionCodingKeys.self)
+        type = try container.decode(GJObjectType.self, forKey: .type)
+        features = try container.decode([GJFeature].self, forKey: .features)
     }
 
 }
 
-extension Feature {
 
+extension GJFeature {
+
+    /// Turns any selected property into the `MK` Object Title
+    ///
+    /// - Parameter key:  _String_, defines the dictionary key to retrieve the value from.
+    /// - Throws: throws _GJObjectError.invalidPropertyKey_ if the key is invalid or not found.
     func updateIdFromProperty(forKey key: String) throws {
         var value = id
         if let doubleValue = properties[key] as? Double {
@@ -130,7 +136,7 @@ extension Feature {
         } else if let stringValue = properties[key] as? String {
             value = stringValue
         } else {
-            throw GeoJsonObjectError.invalidPropertyKey
+            throw GJObjectError.invalidPropertyKey
         }
 
         switch geometryType {

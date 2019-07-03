@@ -10,7 +10,7 @@ import Foundation
 import MapKit
 
 // MARK: - Enums for type, error & coding keys
-enum GeometryType: String, Decodable {
+enum GJGeometryType: String, Decodable {
 
     case point = "Point"
     case lineString = "LineString"
@@ -20,20 +20,20 @@ enum GeometryType: String, Decodable {
     case multiPolygon = "MultiPolygon"
 }
 
-enum GeometryError: Error {
+enum GJGeometryError: Error {
     case invalidType
     case invalidGeometry
     case indalidId
 }
 
-enum GeometryCodingKeys: String, CodingKey {
+enum GJGeometryCodingKeys: String, CodingKey {
     case type
     case coordinates
 }
 
 // MARK: - Models
-class Point: Decodable {
-    var type: GeometryType = .point
+class GJPoint: Decodable {
+    var type: GJGeometryType = .point
     var coordinates: [Double]
 
     init(_ coordinates: [Double]) {
@@ -41,8 +41,8 @@ class Point: Decodable {
     }
 }
 
-class LineString: Decodable {
-    var type: GeometryType = .lineString
+class GJLineString: Decodable {
+    var type: GJGeometryType = .lineString
     var coordinates: [[Double]]
 
     init(_ coordinates: [[Double]]) {
@@ -50,8 +50,8 @@ class LineString: Decodable {
     }
 }
 
-class Polygon: Decodable {
-    var type: GeometryType = .polygon
+class GJPolygon: Decodable {
+    var type: GJGeometryType = .polygon
     var coordinates: [[[Double]]]
 
     init(_ coordinates: [[[Double]]]) {
@@ -59,8 +59,8 @@ class Polygon: Decodable {
     }
 }
 
-class MultiPolygon: Decodable {
-    var type: GeometryType = .multiPolygon
+class GJMultiPolygon: Decodable {
+    var type: GJGeometryType = .multiPolygon
     var coordinates: [[[[Double]]]]
 
     init(_ coordinates: [[[[Double]]]]) {
@@ -68,8 +68,8 @@ class MultiPolygon: Decodable {
     }
 }
 
-// MARK: - Extensions
-extension Point {
+// MARK: - Conversion Extensions
+extension GJPoint {
 
     private func asCLLocationCoordinate2D() -> CLLocationCoordinate2D {
         let lat = coordinates[1]
@@ -85,11 +85,11 @@ extension Point {
     }
 }
 
-extension LineString {
+extension GJLineString {
 
-    private func getPoints() -> [Point] {
-        let points = coordinates.map { (coordinate) -> Point in
-            return Point(coordinate)
+    private func getPoints() -> [GJPoint] {
+        let points = coordinates.map { (coordinate) -> GJPoint in
+            return GJPoint(coordinate)
         }
         return points
     }
@@ -104,17 +104,17 @@ extension LineString {
     }
 }
 
-extension Polygon {
+extension GJPolygon {
 
-    private func getOuterRing() -> LineString {
-        return LineString(coordinates[0])
+    private func getOuterRing() -> GJLineString {
+        return GJLineString(coordinates[0])
     }
 
-    private func getInnerRings() -> [LineString] {
-        var innerRings: [LineString] = []
+    private func getInnerRings() -> [GJLineString] {
+        var innerRings: [GJLineString] = []
         if coordinates.count > 1 {
             for ring in coordinates[1...] {
-                innerRings.append(LineString(ring))
+                innerRings.append(GJLineString(ring))
             }
         }
         return innerRings
@@ -152,11 +152,11 @@ extension Polygon {
     }
 }
 
-extension MultiPolygon {
+extension GJMultiPolygon {
 
-    func getPolygons() -> [Polygon] {
-        let polygons = coordinates.map { (coordinate) -> Polygon in
-            return Polygon(coordinate)
+    func getPolygons() -> [GJPolygon] {
+        let polygons = coordinates.map { (coordinate) -> GJPolygon in
+            return GJPolygon(coordinate)
         }
         return polygons
     }

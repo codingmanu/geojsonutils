@@ -66,7 +66,7 @@ extension ViewController {
         let data = try? Data(contentsOf: bundlefile)
 
         let decoder = JSONDecoder()
-        let decodedData = try? decoder.decode(Polygon.self, from: data!)
+        let decodedData = try? decoder.decode(GJPolygon.self, from: data!)
 
         guard let polygon = decodedData else { return }
 
@@ -74,11 +74,11 @@ extension ViewController {
         mapView.addOverlay(mkPoly)
         mapOverlays = mapView.overlays
 
-        let pt1 = Point([-73.99643342179832, 40.63328912259067])
-        let pt2 = Point([-74.01643342179832, 40.63328912259067])
+        let pt1 = GJPoint([-73.99643342179832, 40.63328912259067])
+        let pt2 = GJPoint([-74.01643342179832, 40.63328912259067])
 
         let points = [pt1, pt2]
-        mapView.loadPointsAsAnnotations(points)
+        mapView.loadGJPointsAsAnnotations(points)
         mapAnnotations = mapView.annotations
     }
 
@@ -86,13 +86,13 @@ extension ViewController {
         resetMap()
 
         // swiftlint:disable line_length
-        guard let featureCollection = try? GeoJsonUtils.readFeatureCollectionFrom(file: "nyc_neighborhoods", withExtension: "geojson") else { return }
+        guard let featureCollection = try? GeoJsonUtils.readGJFeatureCollectionFrom(file: "nyc_neighborhoods", withExtension: "geojson") else { return }
 
         for feature in featureCollection.features {
             try? feature.updateIdFromProperty(forKey: "ntaname")
         }
 
-        mapView.loadFeatureCollection(featureCollection)
+        mapView.loadGJFeatureCollection(featureCollection)
         mapOverlays = mapView.overlays
     }
 
@@ -134,7 +134,7 @@ extension ViewController {
 
         guard let polygon = mapView.overlays[0] as? MKPolygon else { return }
 
-        if polygon.containsPoint(view.annotation!.coordinate) {
+        if polygon.containsCoordinate(view.annotation!.coordinate) {
             let alert = UIAlertController(title: "Inside",
                                           message: "Selected point is inside polygon.",
                                           preferredStyle: UIAlertController.Style.alert)
@@ -166,12 +166,12 @@ extension ViewController {
 
         if mapView.annotations(in: rect).count == 0 {
             let polygons: [MKPolygon] = mapView.overlays.filter { (overlay) -> Bool in
-                overlay is MKPolygon
+                    overlay is MKPolygon
                 } as! [MKPolygon]
             // swiftlint:disable:previous force_cast
 
             for polygon in polygons {
-                if polygon.containsPoint(coordinate) {
+                if polygon.containsCoordinate(coordinate) {
                     if polygon.title != nil {
                         let alert = UIAlertController(title: "Neighborhood",
                                                       message: "\n\(polygon.title!)\n",
