@@ -1,5 +1,5 @@
-## Made in Swift 4.2
-Requires Xcode 10 and Swift 4.2.
+## Made in Swift 5
+Requires Xcode 10.2 and Swift 5.
 
 ## Installation
 Drop in the GeoJsonUtils folder to your Xcode project (make sure to enable "Copy items if needed" and "Create groups").
@@ -7,9 +7,9 @@ Drop in the GeoJsonUtils folder to your Xcode project (make sure to enable "Copy
 ## Usage with Code
 Loading from data:
 ```swift
-    let decodedData = try? decoder.decode(FeatureCollection.self, from: data)
-    guard let featureCollection = decodedData else { return }
-    mapView.loadFeatureCollection(featureCollection)
+    guard let featureCollection = try? GeoJsonUtils.readGJFeatureCollectionFrom(file: "nyc_neighborhoods",
+                                                                                withExtension: "geojson") else { return }
+    mapView.loadGJFeatureCollection(featureCollection)
 ```
 
 \* Play with the demo app for a sample.
