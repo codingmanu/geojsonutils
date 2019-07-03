@@ -5,7 +5,7 @@ Requires Xcode 10.2 and Swift 5.
 Drop in the GeoJsonUtils folder to your Xcode project (make sure to enable "Copy items if needed" and "Create groups").
 
 ## Usage with Code
-Loading from data:
+Loading from file:
 ```swift
     guard let featureCollection = try? GeoJsonUtils.readGJFeatureCollectionFrom(file: "nyc_neighborhoods",
                                                                                 withExtension: "geojson") else { return }
