@@ -48,6 +48,12 @@ class GJLineString: Decodable {
     init(_ coordinates: [[Double]]) {
         self.coordinates = coordinates
     }
+
+    init(_ coordinates: [GJPoint]) {
+        self.coordinates = coordinates.map({ (point) -> [Double] in
+            return point.coordinates
+        })
+    }
 }
 
 class GJPolygon: Decodable {
@@ -57,6 +63,12 @@ class GJPolygon: Decodable {
     init(_ coordinates: [[[Double]]]) {
         self.coordinates = coordinates
     }
+
+    init(_ coordinates: [GJLineString]) {
+        self.coordinates = coordinates.map({ (line) -> [[Double]] in
+            return line.coordinates
+        })
+    }
 }
 
 class GJMultiPolygon: Decodable {
@@ -65,6 +77,12 @@ class GJMultiPolygon: Decodable {
 
     init(_ coordinates: [[[[Double]]]]) {
         self.coordinates = coordinates
+    }
+
+    init(_ coordinates: [GJPolygon]) {
+        self.coordinates = coordinates.map({ (polygon) -> [[[Double]]] in
+            return polygon.coordinates
+        })
     }
 }
 
