@@ -6,3 +6,5 @@ build_project:
   script:
     - xcodebuild clean -project GeoJsonUtilsApp/GeoJsonUtilsApp.xcodeproj -scheme GeoJsonUtilsApp | xcpretty
     - xcodebuild test -project GeoJsonUtilsApp/GeoJsonUtilsApp.xcodeproj -scheme GeoJsonUtilsApp -destination 'platform=iOS Simulator,name=iPhone Xs,OS=12.2' | xcpretty -s
+
+
