@@ -1,3 +1,6 @@
+before_script:
+  - export PATH=$PATH:/usr/local/bin
+
 stages:
   - build
 
