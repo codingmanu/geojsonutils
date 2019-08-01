@@ -141,3 +141,6 @@ iOSInjectionProject/
 #User defined:
 
 # End of https://www.gitignore.io/api/xcode,macos,swift,cocoapods
+
+#Gitlab builds
+builds/
