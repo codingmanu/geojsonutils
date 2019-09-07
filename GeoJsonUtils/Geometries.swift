@@ -120,6 +120,10 @@ extension GJLineString {
 
         return MKPolyline(coordinates: coords, count: coords.count)
     }
+    
+    func isClosed() -> Bool {
+        return coordinates[0] == coordinates[coordinates.count-1]
+    }
 }
 
 extension GJPolygon {
