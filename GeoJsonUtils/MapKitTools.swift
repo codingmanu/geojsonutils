@@ -9,6 +9,31 @@
 import Foundation
 import MapKit
 
+extension MKPolyline {
+    
+    /// Returns the length of the polyline
+    ///
+    /// - Returns: _Double_, returns the length of the polyline.
+    func length() -> Double {
+        // If the line has less than two points, distance is zero, so bail out.
+        if self.pointCount < 2 {
+            return 0.0
+        }
+        
+        var length = 0.0
+        var lastPoint = self.points()[0]
+        
+        // Adds the distance from the previous point to the total length.
+        for point in UnsafeBufferPointer(start: self.points(), count: self.pointCount) {
+            let distance = lastPoint.distance(to: point)
+            length += distance
+            lastPoint = point
+        }
+        
+        return length
+    }
+}
+
 extension MKPolygon {
 
     /// Checks if a given coordinate is inside the polygon.
