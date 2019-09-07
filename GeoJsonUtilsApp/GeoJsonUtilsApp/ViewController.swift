@@ -117,7 +117,15 @@ extension ViewController {
 
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
 
-        //Return an `MKPolygonRenderer` for the `MKPolygon` in the `MKMapViewDelegate`s method
+        if let polyline = overlay as? MKPolyline {
+            let testlineRenderer = MKPolylineRenderer(polyline: polyline)
+
+            testlineRenderer.strokeColor = .blue
+            testlineRenderer.lineWidth = 1.0
+
+            return testlineRenderer
+        }
+
         if let polygon = overlay as? MKPolygon {
             let testlineRenderer = MKPolygonRenderer(polygon: polygon)
 

@@ -114,11 +114,11 @@ extension GJLineString {
 
     func asMKPolyLine() -> MKPolyline {
 
-        let coords = self.getPoints().compactMap({ (point) -> CLLocationCoordinate2D in
-            return point.asMKPointAnnotation().coordinate
+        let coords = self.getPoints().compactMap({ (point) -> MKMapPoint in
+            return MKMapPoint(point.asMKPointAnnotation().coordinate)
         })
 
-        return MKPolyline(coordinates: coords, count: coords.count)
+        return MKPolyline(points: coords, count: coords.count)
     }
     
     func isClosed() -> Bool {

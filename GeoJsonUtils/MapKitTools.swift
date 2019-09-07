@@ -9,6 +9,20 @@
 import Foundation
 import MapKit
 
+extension CLLocationCoordinate2D {
+    
+    /// Calculates the distance between two coordinates.
+    /// ATTENTION: Does not work across the antemeridian.
+    ///
+    /// - Parameter coordinate: _CLLocationCoordinate2D_, Coordinate to calculate distance to.
+    /// - Returns: _Double_, Distance in degrees.
+    func distance(to coordinate: CLLocationCoordinate2D) -> Double {
+        let horizontalDistance = self.longitude - coordinate.longitude
+        let verticalDistance = self.latitude - coordinate.latitude
+        return sqrt((horizontalDistance * horizontalDistance)+(verticalDistance * verticalDistance))
+    }
+}
+
 extension MKPolyline {
     
     /// Returns the length of the polyline
@@ -25,7 +39,9 @@ extension MKPolyline {
         
         // Adds the distance from the previous point to the total length.
         for point in UnsafeBufferPointer(start: self.points(), count: self.pointCount) {
-            let distance = lastPoint.distance(to: point)
+            let coordinate = point.coordinate
+            let lastPointCoordinate = lastPoint.coordinate
+            let distance = lastPointCoordinate.distance(to: coordinate)
             length += distance
             lastPoint = point
         }
@@ -45,11 +61,7 @@ extension MKPolygon {
         let mapPoint: MKMapPoint = MKMapPoint(coordinate)
         let polygonViewPoint: CGPoint = polygonRenderer.point(for: mapPoint)
 
-        if polygonRenderer.path.contains(polygonViewPoint) {
-            return true
-        }
-
-        return false
+        return polygonRenderer.path.contains(polygonViewPoint)
     }
 }
 
