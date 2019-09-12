@@ -22,7 +22,7 @@ jobs:
     - uses: actions/checkout@v1
     - name: Building the project...
       run:
-        xcodebuild -project GeoJsonUtilsApp/GeoJsonUtilsApp.xcodeproj -scheme GeoJsonUtilsApp | xcpretty
+        xcodebuild -project GeoJsonUtilsApp/GeoJsonUtilsApp.xcodeproj -scheme GeoJsonUtilsApp -allowProvisioningUpdates | xcpretty
         
   test:
     needs: [clean, build]
