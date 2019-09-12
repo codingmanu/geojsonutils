@@ -22,7 +22,7 @@ class GeoJsonUtils {
         guard let bundlefile = Bundle.main.url(forResource: file, withExtension: withExtension) else {
             throw GJObjectError.invalidFeatureCollection
         }
-        
+
         let data = try? Data(contentsOf: bundlefile)
 
         let decoder = JSONDecoder()

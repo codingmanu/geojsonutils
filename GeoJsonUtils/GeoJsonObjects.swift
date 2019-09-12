@@ -122,7 +122,6 @@ class GJFeatureCollection: Decodable {
 
 }
 
-
 extension GJFeature {
 
     /// Turns any selected property into the `MK` Object Title
