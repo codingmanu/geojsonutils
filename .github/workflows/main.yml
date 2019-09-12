@@ -1,6 +1,12 @@
 name: CI
 
-on: [push]
+on: 
+  push:
+    branches:
+    - master
+    - develop
+    - release/*
+    - hotfix/*
 
 jobs:
   build:
@@ -9,7 +15,15 @@ jobs:
     
     steps:
     - uses: actions/checkout@v1
-    - name: Run a multi-line script
-      run: |
+    - name: Building the project.
+      run:
         xcodebuild clean -project GeoJsonUtilsApp/GeoJsonUtilsApp.xcodeproj -scheme GeoJsonUtilsApp | xcpretty
+        
+  test:
+    runs-on: macOS-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: Running the project's tests.
+      run:
         xcodebuild test -project GeoJsonUtilsApp/GeoJsonUtilsApp.xcodeproj -scheme GeoJsonUtilsApp -destination 'platform=iOS Simulator,name=iPhone Xs,OS=latest' | xcpretty -s
