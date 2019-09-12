@@ -32,6 +32,9 @@ class ViewController: UIViewController, MKMapViewDelegate {
         mapView.addGestureRecognizer(tap)
 
         testLine()
+        
+        // adding this to test if @github actions build step fails
+        this-should-not-be-here
     }
 
     func testLine() {
