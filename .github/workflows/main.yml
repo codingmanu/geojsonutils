@@ -1,11 +1,16 @@
 name: CI
 
-on: [push, pull_request]
-  branches:
-    - master
-    - develop
-    - 'release/*'
-    - 'hotfix/*'
+on:
+  pull_request:
+    branches:
+      - master
+      - develop
+  push:
+    branches:
+      - master
+      - develop
+      - 'release/*'
+      - 'hotfix/*'
 
 
 jobs:
