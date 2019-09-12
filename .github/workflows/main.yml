@@ -1,7 +1,9 @@
 name: iOS-CI
 
 on:
-  [push]
+  push:
+    branches:
+      - develop
 
 
 jobs:
