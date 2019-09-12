@@ -34,7 +34,7 @@ class ViewController: UIViewController, MKMapViewDelegate {
         testLine()
         
         // adding this to test if @github actions build step fails
-        this-should-not-be-here-again
+        this-should-not-be-here
     }
 
     func testLine() {
