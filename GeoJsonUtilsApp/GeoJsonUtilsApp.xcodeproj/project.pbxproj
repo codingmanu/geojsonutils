@@ -541,7 +541,7 @@
 				8026724C21F97F3E00F79328 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		8026724D21F97F3E00F79328 /* Build configuration list for PBXNativeTarget "GeoJsonUtilsApp" */ = {
 			isa = XCConfigurationList;
@@ -550,7 +550,7 @@
 				8026724F21F97F3E00F79328 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		803E505521FF6C4F00699E12 /* Build configuration list for PBXNativeTarget "GeoJsonUtilsAppTests" */ = {
 			isa = XCConfigurationList;
@@ -559,7 +559,7 @@
 				803E505421FF6C4F00699E12 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
