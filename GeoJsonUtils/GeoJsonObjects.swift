@@ -80,6 +80,15 @@ struct GJFeature: Decodable {
             if id != nil {
                 mkGeometry?.title = id
             }
+        case .multiLineString:
+            let multiLine = try container.decode(GJMultiLineString.self, forKey: .geometry)
+            self.geometry = multiLine
+
+            mkGeometry = multiLine.asMKPolyLine()
+
+            if id != nil {
+                mkGeometry?.title = id
+            }
         case .polygon:
             let polygon = try container.decode(GJPolygon.self, forKey: .geometry)
             self.geometry = polygon

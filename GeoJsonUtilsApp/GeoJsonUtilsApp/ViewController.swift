@@ -16,9 +16,13 @@ class ViewController: UIViewController, MKMapViewDelegate {
     var mapOverlays = [MKOverlay]()
     var mapAnnotations = [MKAnnotation]()
 
-    let viewRegion = MKCoordinateRegion(center: CLLocationCoordinate2DMake(40.700, -73.983),
+    let newYorkViewRegion = MKCoordinateRegion(center: CLLocationCoordinate2DMake(40.700, -73.983),
                                         latitudinalMeters: 15000,
                                         longitudinalMeters: 15000)
+
+    let floridaViewRegion = MKCoordinateRegion(center: CLLocationCoordinate2DMake(27.1527116979525, -80.8674058699175),
+                                               latitudinalMeters: 500000,
+                                               longitudinalMeters: 500000)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,7 +30,7 @@ class ViewController: UIViewController, MKMapViewDelegate {
         mapView.delegate = self
         mapView.mapType = MKMapType.mutedStandard
         mapView.showsScale = true
-        mapView.setRegion(viewRegion, animated: true)
+        mapView.setRegion(newYorkViewRegion, animated: true)
 
         let tap = UITapGestureRecognizer(target: self, action: #selector(didTapOnMap(_:)))
         mapView.addGestureRecognizer(tap)
@@ -39,8 +43,14 @@ class ViewController: UIViewController, MKMapViewDelegate {
 
         mapAnnotations.removeAll()
         mapOverlays.removeAll()
+    }
 
-        mapView.setRegion(viewRegion, animated: true)
+    func setFloridaRegion() {
+        mapView.setRegion(floridaViewRegion, animated: true)
+    }
+
+    func setNewYorkRegion() {
+        mapView.setRegion(newYorkViewRegion, animated: true)
     }
 }
 
@@ -53,6 +63,7 @@ extension ViewController {
 
     @IBAction func loadInsideOutsidePointsButtonTapped(_ sender: Any) {
         resetMap()
+        setNewYorkRegion()
 
         let alert = UIAlertController(title: "Check",
                                       message: "Tap the pins to check if they're inside or outside the polygon.",
@@ -84,12 +95,28 @@ extension ViewController {
 
     @IBAction func loadNYCNeighborhoodsButtonTapped(_ sender: Any) {
         resetMap()
+        setNewYorkRegion()
 
         // swiftlint:disable line_length
         guard let featureCollection = try? GeoJsonUtils.readGJFeatureCollectionFrom(file: "nyc_neighborhoods", withExtension: "geojson") else { return }
 
         for feature in featureCollection.features {
             try? feature.updateIdFromProperty(forKey: "ntaname")
+        }
+
+        mapView.loadGJFeatureCollection(featureCollection)
+        mapOverlays = mapView.overlays
+    }
+
+    @IBAction func loadFloridaTrailButtonTapped(_ sender: Any) {
+        resetMap()
+        setFloridaRegion()
+
+        // swiftlint:disable line_length
+        guard let featureCollection = try? GeoJsonUtils.readGJFeatureCollectionFrom(file: "trail", withExtension: "geojson") else { return }
+
+        for feature in featureCollection.features {
+            try? feature.updateIdFromProperty(forKey: "Trail_Name")
         }
 
         mapView.loadGJFeatureCollection(featureCollection)
@@ -117,17 +144,25 @@ extension ViewController {
 
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
 
-        //Return an `MKPolygonRenderer` for the `MKPolygon` in the `MKMapViewDelegate`s method
-        if let polygon = overlay as? MKPolygon {
-            let testlineRenderer = MKPolygonRenderer(polygon: polygon)
+        //Return an `MKPolylineRenderer` for the `MKPolyline` in the `MKMapViewDelegate`s method
+        if let polyLine = overlay as? MKPolyline {
+            let testlineRenderer = MKPolylineRenderer(polyline: polyLine)
 
-            testlineRenderer.fillColor = UIColor.gray.withAlphaComponent(0.5)
-            testlineRenderer.strokeColor = .blue
-            testlineRenderer.lineWidth = 1.0
+            testlineRenderer.strokeColor = .red
+            testlineRenderer.lineWidth = 2.0
             return testlineRenderer
         }
-        fatalError("Something wrong...")
-        //return MKOverlayRenderer()
+
+        //Return an `MKPolygonRenderer` for the `MKPolygon` in the `MKMapViewDelegate`s method
+        if let polygon = overlay as? MKPolygon {
+            let testPolygonRenderer = MKPolygonRenderer(polygon: polygon)
+
+            testPolygonRenderer.fillColor = UIColor.gray.withAlphaComponent(0.5)
+            testPolygonRenderer.strokeColor = .blue
+            testPolygonRenderer.lineWidth = 1.0
+            return testPolygonRenderer
+        }
+        fatalError("Other overlay types found...")
     }
 
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {

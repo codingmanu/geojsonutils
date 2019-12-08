@@ -58,7 +58,7 @@ extension MKMapView {
             switch feature.geometryType {
             case .point:
                 self.loadGJPointFeatureAsAnnotation(feature)
-            case .lineString, .polygon, .multiPolygon:
+            case .lineString, .multiLineString, .polygon, .multiPolygon:
                 self.loadGJFeatureAsOverlay(feature)
             default:
                 self.loadGJFeatureAsOverlay(feature)
@@ -91,17 +91,16 @@ extension MKMapView {
     /// - Parameter feature: the feature object to be loaded into the map. Works for features containint `GJLineString`,
     ///     `GJPolygon` and `GJMultiPolygon`.
     func loadGJFeatureAsOverlay(_ feature: GJFeature) {
-        if feature.geometryType == .lineString {
+        switch feature.geometryType {
+        case .lineString, .multiLineString:
             if let polyline = feature.mkGeometry as? MKPolyline {
                 self.addOverlay(polyline)
             }
-        }
-        if feature.geometryType == .polygon {
+        case .polygon:
             if let polygon = feature.mkGeometry as? MKPolygon {
                 self.addOverlay(polygon)
             }
-        }
-        if feature.geometryType == .multiPolygon {
+        case .multiPolygon:
             if feature.multiMkGeometry != nil {
                 for mkGeometry in feature.multiMkGeometry! {
                     if let polygon = mkGeometry as? MKPolygon {
@@ -109,6 +108,8 @@ extension MKMapView {
                     }
                 }
             }
+        default:
+            break
         }
     }
 }

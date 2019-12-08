@@ -33,7 +33,6 @@ class GeoJsonUtils {
             return decodedData
 
         } catch let error {
-
             print(error.localizedDescription)
             throw GJObjectError.invalidFeatureCollection
         }

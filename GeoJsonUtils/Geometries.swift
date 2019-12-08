@@ -56,6 +56,21 @@ class GJLineString: Decodable {
     }
 }
 
+class GJMultiLineString: Decodable {
+    var type: GJGeometryType = .multiLineString
+    var coordinates: [[[Double]]]
+
+    init(_ coordinates: [[[Double]]]) {
+        self.coordinates = coordinates
+    }
+
+    init(_ coordinates: [GJLineString]) {
+        self.coordinates = coordinates.map({ (lineString) -> [[Double]] in
+            return lineString.coordinates
+        })
+    }
+}
+
 class GJPolygon: Decodable {
     var type: GJGeometryType = .polygon
     var coordinates: [[[Double]]]
@@ -105,7 +120,7 @@ extension GJPoint {
 
 extension GJLineString {
 
-    private func getPoints() -> [GJPoint] {
+    fileprivate func getPoints() -> [GJPoint] {
         let points = coordinates.map { (coordinate) -> GJPoint in
             return GJPoint(coordinate)
         }
@@ -118,6 +133,30 @@ extension GJLineString {
             return point.asMKPointAnnotation().coordinate
         })
 
+        return MKPolyline(coordinates: coords, count: coords.count)
+    }
+}
+
+extension GJMultiLineString {
+
+    fileprivate func getLines() -> [GJLineString] {
+        let lines = coordinates.map { (line) -> GJLineString in
+            return GJLineString(line)
+        }
+        return lines
+    }
+
+    func asMKPolyLine() -> MKPolyline {
+
+        var coords = [CLLocationCoordinate2D]()
+
+        self.getLines().forEach { (line) in
+            let points = line.getPoints().compactMap({ (point) -> CLLocationCoordinate2D in
+                return point.asMKPointAnnotation().coordinate
+            })
+            coords.append(contentsOf: points)
+        }
+        
         return MKPolyline(coordinates: coords, count: coords.count)
     }
 }
