@@ -34,6 +34,32 @@ class ViewController: UIViewController, MKMapViewDelegate {
 
         let tap = UITapGestureRecognizer(target: self, action: #selector(didTapOnMap(_:)))
         mapView.addGestureRecognizer(tap)
+
+        testLine()
+        
+        // adding this to test if @github actions build step fails
+        //this-should-not-be-here
+    }
+
+    func testLine() {
+        let bundlefile = Bundle.main.url(forResource: "track_points", withExtension: "geojson")!
+        let data = try? Data(contentsOf: bundlefile)
+
+        let decoder = JSONDecoder()
+        let decodedData = try? decoder.decode(GJFeatureCollection.self, from: data!)
+
+        guard let features = decodedData?.features as? [GJFeature] else { return }
+
+        let points = features.map { (feature) -> GJPoint in
+            // swiftlint:disable force_cast
+            return feature.geometry as! GJPoint
+        }
+
+        if points.count > 0 {
+
+            let line = GJLineString(points)
+            mapView.addOverlay(line.asMKPolyLine())
+        }
     }
 
     func resetMap() {
@@ -153,7 +179,6 @@ extension ViewController {
             return testlineRenderer
         }
 
-        //Return an `MKPolygonRenderer` for the `MKPolygon` in the `MKMapViewDelegate`s method
         if let polygon = overlay as? MKPolygon {
             let testPolygonRenderer = MKPolygonRenderer(polygon: polygon)
 

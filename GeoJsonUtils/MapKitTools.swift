@@ -9,6 +9,47 @@
 import Foundation
 import MapKit
 
+extension CLLocationCoordinate2D {
+
+    /// Calculates the distance between two coordinates.
+    /// ATTENTION: Does not work across the antemeridian.
+    ///
+    /// - Parameter coordinate: _CLLocationCoordinate2D_, Coordinate to calculate distance to.
+    /// - Returns: _Double_, Distance in degrees.
+    func distance(to coordinate: CLLocationCoordinate2D) -> Double {
+        let horizontalDistance = self.longitude - coordinate.longitude
+        let verticalDistance = self.latitude - coordinate.latitude
+        return sqrt((horizontalDistance * horizontalDistance)+(verticalDistance * verticalDistance))
+    }
+}
+
+extension MKPolyline {
+
+    /// Returns the length of the polyline
+    ///
+    /// - Returns: _Double_, returns the length of the polyline.
+    func length() -> Double {
+        // If the line has less than two points, distance is zero, so bail out.
+        if self.pointCount < 2 {
+            return 0.0
+        }
+
+        var length = 0.0
+        var lastPoint = self.points()[0]
+
+        // Adds the distance from the previous point to the total length.
+        for point in UnsafeBufferPointer(start: self.points(), count: self.pointCount) {
+            let coordinate = point.coordinate
+            let lastPointCoordinate = lastPoint.coordinate
+            let distance = lastPointCoordinate.distance(to: coordinate)
+            length += distance
+            lastPoint = point
+        }
+
+        return length
+    }
+}
+
 extension MKPolygon {
 
     /// Checks if a given coordinate is inside the polygon.
@@ -20,11 +61,7 @@ extension MKPolygon {
         let mapPoint: MKMapPoint = MKMapPoint(coordinate)
         let polygonViewPoint: CGPoint = polygonRenderer.point(for: mapPoint)
 
-        if polygonRenderer.path.contains(polygonViewPoint) {
-            return true
-        }
-
-        return false
+        return polygonRenderer.path.contains(polygonViewPoint)
     }
 }
 
