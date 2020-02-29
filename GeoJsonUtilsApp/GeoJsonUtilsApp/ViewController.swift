@@ -36,9 +36,6 @@ class ViewController: UIViewController, MKMapViewDelegate {
         mapView.addGestureRecognizer(tap)
 
         testLine()
-        
-        // adding this to test if @github actions build step fails
-        //this-should-not-be-here
     }
 
     func testLine() {
@@ -48,7 +45,7 @@ class ViewController: UIViewController, MKMapViewDelegate {
         let decoder = JSONDecoder()
         let decodedData = try? decoder.decode(GJFeatureCollection.self, from: data!)
 
-        guard let features = decodedData?.features as? [GJFeature] else { return }
+        guard let features = decodedData?.features else { return }
 
         let points = features.map { (feature) -> GJPoint in
             // swiftlint:disable force_cast
