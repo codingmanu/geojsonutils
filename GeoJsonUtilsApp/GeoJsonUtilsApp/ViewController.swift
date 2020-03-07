@@ -20,9 +20,9 @@ class ViewController: UIViewController, MKMapViewDelegate {
                                         latitudinalMeters: 15000,
                                         longitudinalMeters: 15000)
 
-    let floridaViewRegion = MKCoordinateRegion(center: CLLocationCoordinate2DMake(27.1527116979525, -80.8674058699175),
-                                               latitudinalMeters: 500000,
-                                               longitudinalMeters: 500000)
+    let floridaViewRegion = MKCoordinateRegion(center: CLLocationCoordinate2DMake(28.2, -83.5),
+                                               latitudinalMeters: 800000,
+                                               longitudinalMeters: 800000)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,29 +34,6 @@ class ViewController: UIViewController, MKMapViewDelegate {
 
         let tap = UITapGestureRecognizer(target: self, action: #selector(didTapOnMap(_:)))
         mapView.addGestureRecognizer(tap)
-
-        testLine()
-    }
-
-    func testLine() {
-        let bundlefile = Bundle.main.url(forResource: "track_points", withExtension: "geojson")!
-        let data = try? Data(contentsOf: bundlefile)
-
-        let decoder = JSONDecoder()
-        let decodedData = try? decoder.decode(GJFeatureCollection.self, from: data!)
-
-        guard let features = decodedData?.features else { return }
-
-        let points = features.map { (feature) -> GJPoint in
-            // swiftlint:disable force_cast
-            return feature.geometry as! GJPoint
-        }
-
-        if points.count > 0 {
-
-            let line = GJLineString(points)
-            mapView.addOverlay(line.asMKPolyLine())
-        }
     }
 
     func resetMap() {
