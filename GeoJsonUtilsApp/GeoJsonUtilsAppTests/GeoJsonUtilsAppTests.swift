@@ -86,10 +86,29 @@ class GeoJsonUtilsAppTests: XCTestCase {
     }
 
 
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
+    func testReadingFilePerformance() {
+
         self.measure {
-            // Put the code you want to measure the time of here.
+            guard let bundlefile = Bundle.main.url(forResource: "nyc_neighborhoods", withExtension: "geojson") else {
+                XCTFail("Test file doesn't exist")
+                return
+            }
+            XCTAssertNotNil(try? Data(contentsOf: bundlefile))
+        }
+    }
+
+    func testDecodingFilePerformance() {
+
+        guard let bundlefile = Bundle.main.url(forResource: "nyc_neighborhoods", withExtension: "geojson") else {
+            XCTFail("Test file doesn't exist")
+            return
+        }
+
+        let data = try? Data(contentsOf: bundlefile)
+
+        self.measure {
+            let decoder = JSONDecoder()
+            XCTAssertNotNil(try? decoder.decode(GJFeatureCollection.self, from: data!))
         }
     }
 }
