@@ -95,9 +95,9 @@ extension MKMapView {
             switch feature.geometryType {
             case .point:
                 self.loadGJPointFeatureAsAnnotation(feature)
+            case .multiPoint:
+                self.loadGJMultiPointFeatureAsAnnotations(feature)
             case .lineString, .multiLineString, .polygon, .multiPolygon:
-                self.loadGJFeatureAsOverlay(feature)
-            default:
                 self.loadGJFeatureAsOverlay(feature)
             }
         }
@@ -107,18 +107,10 @@ extension MKMapView {
     ///
     /// - Parameter points: GJPoint array to be loaded into the map.
     func loadGJPointsAsAnnotations(_ points: [GJPoint]) {
-        for point in points {
-            self.addAnnotation(point.asMKPointAnnotation())
-        }
-    }
-
-    /// Loads the contents of a GJMultiPoint into the map as MKPointAnnotations.
-    ///
-    /// - Parameter multipoint: GJMultiPoint to be loaded into the map.
-    func loadGJMultiPointAsAnnotations(_ multipoint: GJMultiPoint) {
-
-        multipoint.asMKPointAnnotationArray().forEach { (annotation) in
-            self.addAnnotation(annotation)
+        DispatchQueue.main.async { [unowned self] in
+            for point in points {
+                self.addAnnotation(point.asMKPointAnnotation())
+            }
         }
     }
 
@@ -126,37 +118,62 @@ extension MKMapView {
     ///
     /// - Parameter feature: the feature object to be loaded into the map.
     func loadGJPointFeatureAsAnnotation(_ feature: GJFeature) {
-        if feature.geometryType == .point {
-            if let point = feature.mkGeometry as? MKPointAnnotation {
-                self.addAnnotation(point)
+        DispatchQueue.main.async { [unowned self] in
+            if feature.geometryType == .point {
+                if let point = feature.mkGeometry as? MKPointAnnotation {
+                    self.addAnnotation(point)
+                }
+            }
+        }
+    }
+
+    /// Loads a `GJMultiPointFeature` into the map as multiple `MKPointAnnotation`.
+    ///
+    /// - Parameter feature: the feature object to be loaded into the map.
+    func loadGJMultiPointFeatureAsAnnotations(_ feature: GJFeature) {
+        if feature.geometryType == .multiPoint {
+            DispatchQueue.main.async { [unowned self] in
+                if let points = feature.multiMkGeometry as? [MKPointAnnotation] {
+                    for point in points {
+                        self.addAnnotation(point)
+                    }
+                }
             }
         }
     }
 
     /// Loads a `GJFeature` into the map as a `MKOverlay`.
     ///
-    /// - Parameter feature: the feature object to be loaded into the map. Works for features containint `GJLineString`,
-    ///     `GJPolygon` and `GJMultiPolygon`.
+    /// - Parameter feature: the feature object to be loaded into the map. Works for features containing
+    ///     `GJLineString`, `GJMultiLineString`,  `GJPolygon` and `GJMultiPolygon`.
     func loadGJFeatureAsOverlay(_ feature: GJFeature) {
-        switch feature.geometryType {
-        case .lineString, .multiLineString:
-            if let polyline = feature.mkGeometry as? MKPolyline {
-                self.addOverlay(polyline)
-            }
-        case .polygon:
-            if let polygon = feature.mkGeometry as? MKPolygon {
-                self.addOverlay(polygon)
-            }
-        case .multiPolygon:
-            if feature.multiMkGeometry != nil {
-                for mkGeometry in feature.multiMkGeometry! {
-                    if let polygon = mkGeometry as? MKPolygon {
-                        self.addOverlay(polygon)
+        DispatchQueue.main.async { [unowned self] in
+            switch feature.geometryType {
+            case .lineString:
+                if let polyline = feature.mkGeometry as? MKPolyline {
+                    self.addOverlay(polyline)
+                }
+            case .multiLineString:
+                if let multiLine = feature.multiMkGeometry as? [MKPolyline] {
+                    for line in multiLine {
+                        self.addOverlay(line)
                     }
                 }
+            case .polygon:
+                if let polygon = feature.mkGeometry as? MKPolygon {
+                    self.addOverlay(polygon)
+                }
+            case .multiPolygon:
+                if feature.multiMkGeometry != nil {
+                    for mkGeometry in feature.multiMkGeometry! {
+                        if let polygon = mkGeometry as? MKPolygon {
+                            self.addOverlay(polygon)
+                        }
+                    }
+                }
+            default:
+                break
             }
-        default:
-            break
         }
     }
 }

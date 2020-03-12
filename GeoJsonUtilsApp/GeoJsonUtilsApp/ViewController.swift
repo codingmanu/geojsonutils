@@ -13,9 +13,6 @@ class ViewController: UIViewController, MKMapViewDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
 
-    var mapOverlays = [MKOverlay]()
-    var mapAnnotations = [MKAnnotation]()
-
     let newYorkViewRegion = MKCoordinateRegion(center: CLLocationCoordinate2DMake(40.700, -73.983),
                                         latitudinalMeters: 15000,
                                         longitudinalMeters: 15000)
@@ -38,11 +35,13 @@ class ViewController: UIViewController, MKMapViewDelegate {
 
     func resetMap() {
 
-        mapView.removeOverlays(mapOverlays)
-        mapView.removeAnnotations(mapAnnotations)
+        let mapAnnotations = self.mapView.annotations
+        let mapOverlays = self.mapView.overlays
 
-        mapAnnotations.removeAll()
-        mapOverlays.removeAll()
+        DispatchQueue.main.async { [unowned self] in
+            self.mapView.removeOverlays(mapOverlays)
+            self.mapView.removeAnnotations(mapAnnotations)
+        }
     }
 
     func setFloridaRegion() {
@@ -83,14 +82,12 @@ extension ViewController {
 
         let mkPoly = polygon.asMKPolygon()
         mapView.addOverlay(mkPoly)
-        mapOverlays = mapView.overlays
 
         let pt1 = GJPoint([-73.99643342179832, 40.63328912259067])
         let pt2 = GJPoint([-74.01643342179832, 40.63328912259067])
 
         let points = [pt1, pt2]
         mapView.loadGJPointsAsAnnotations(points)
-        mapAnnotations = mapView.annotations
     }
 
     @IBAction func loadNYCNeighborhoodsButtonTapped(_ sender: Any) {
@@ -98,29 +95,36 @@ extension ViewController {
         setNewYorkRegion()
 
         // swiftlint:disable line_length
-        guard let featureCollection = try? GeoJsonUtils.readGJFeatureCollectionFrom(file: "nyc_neighborhoods", withExtension: "geojson") else { return }
-
-        for feature in featureCollection.features {
-            try? feature.updateIdFromProperty(forKey: "ntaname")
+        GeoJsonUtils.readGJFeatureCollectionFrom(file: "nyc_neighborhoods", withExtension: "geojson") { [unowned self] (result) in
+            switch result {
+            case .failure(let error):
+                print(error.localizedDescription)
+            case .success(let featureCollection):
+                for feature in featureCollection.features {
+                    try? feature.updateTitleFromProperty(forKey: "ntaname")
+                }
+                self.mapView.loadGJFeatureCollection(featureCollection)
+            }
         }
-
-        mapView.loadGJFeatureCollection(featureCollection)
-        mapOverlays = mapView.overlays
     }
 
     @IBAction func loadFloridaTrailButtonTapped(_ sender: Any) {
         resetMap()
         setFloridaRegion()
 
-        // swiftlint:disable line_length
-        guard let featureCollection = try? GeoJsonUtils.readGJFeatureCollectionFrom(file: "trail", withExtension: "geojson") else { return }
+        GeoJsonUtils.readGJFeatureCollectionFrom(file: "trail", withExtension: "geojson") { [unowned self] (result) in
 
-        for feature in featureCollection.features {
-            try? feature.updateIdFromProperty(forKey: "Trail_Name")
+            switch result {
+            case .failure(let error):
+                print(error.localizedDescription)
+            case .success(let featureCollection):
+                for feature in featureCollection.features {
+                    try? feature.updateTitleFromProperty(forKey: "Trail_Name")
+                }
+
+                self.mapView.loadGJFeatureCollection(featureCollection)
+            }
         }
-
-        mapView.loadGJFeatureCollection(featureCollection)
-        mapOverlays = mapView.overlays
     }
 
     @IBAction func twitterButtonTapped(_ sender: Any) {

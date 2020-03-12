@@ -199,7 +199,7 @@ extension GJFeature {
     ///
     /// - Parameter key:  _String_, defines the dictionary key to retrieve the value from.
     /// - Throws: throws _GJObjectError.invalidPropertyKey_ if the key is invalid or not found.
-    func updateIdFromProperty(forKey key: String) throws {
+    func updateTitleFromProperty(forKey key: String) throws {
         var value = id
         if let doubleValue = properties[key] as? Double {
             value = String(doubleValue)
