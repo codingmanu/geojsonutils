@@ -112,6 +112,16 @@ extension MKMapView {
         }
     }
 
+    /// Loads the contents of a GJMultiPoint into the map as MKPointAnnotations.
+    ///
+    /// - Parameter multipoint: GJMultiPoint to be loaded into the map.
+    func loadGJMultiPointAsAnnotations(_ multipoint: GJMultiPoint) {
+
+        multipoint.asMKPointAnnotationArray().forEach { (annotation) in
+            self.addAnnotation(annotation)
+        }
+    }
+
     /// Loads a `GJPointFeature` into the map as a `MKPointAnnotation`.
     ///
     /// - Parameter feature: the feature object to be loaded into the map.

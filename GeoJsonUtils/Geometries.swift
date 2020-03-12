@@ -41,6 +41,21 @@ class GJPoint: Decodable {
     }
 }
 
+class GJMultiPoint: Decodable {
+    var type: GJGeometryType = .multiPoint
+    var coordinates: [[Double]]
+
+    init(_ coordinates: [[Double]]) {
+        self.coordinates = coordinates
+    }
+
+    init(_ coordinates: [GJPoint]) {
+        self.coordinates = coordinates.map({ (point) -> [Double] in
+            return point.coordinates
+        })
+    }
+}
+
 class GJLineString: Decodable {
     var type: GJGeometryType = .lineString
     var coordinates: [[Double]]
@@ -118,6 +133,30 @@ extension GJPoint {
     }
 }
 
+extension GJMultiPoint {
+
+    private func asCLLocationCoordinate2DArray() -> [CLLocationCoordinate2D] {
+
+        return coordinates.map { (coordinate) -> CLLocationCoordinate2D in
+            let lat = coordinate[1]
+            let lon = coordinate[0]
+
+            return CLLocationCoordinate2D(latitude: lat, longitude: lon)
+        }
+    }
+
+    func asMKPointAnnotationArray() -> [MKPointAnnotation] {
+
+        let locations = self.asCLLocationCoordinate2DArray()
+
+        return locations.map { (location) -> MKPointAnnotation in
+            let anno = MKPointAnnotation()
+            anno.coordinate = location
+            return anno
+        }
+    }
+}
+
 extension GJLineString {
 
     fileprivate func getPoints() -> [GJPoint] {
@@ -150,18 +189,23 @@ extension GJMultiLineString {
         return lines
     }
 
-    func asMKPolyLine() -> MKPolyline {
+    func asMKPolyLineArray() -> [MKPolyline] {
 
-        var coords = [CLLocationCoordinate2D]()
+        var lines = [MKPolyline]()
 
         self.getLines().forEach { (line) in
+
+            var coords = [CLLocationCoordinate2D]()
+
             let points = line.getPoints().compactMap({ (point) -> CLLocationCoordinate2D in
                 return point.asMKPointAnnotation().coordinate
             })
             coords.append(contentsOf: points)
+
+            lines.append(MKPolyline(coordinates: coords, count: coords.count))
         }
-        
-        return MKPolyline(coordinates: coords, count: coords.count)
+
+        return lines
     }
 }
 
