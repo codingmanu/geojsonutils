@@ -1,6 +1,6 @@
 //
 //  GeoJsonUtils.swift
-//  SwiftCityJSONTest
+//  GeoJsonUtils
 //
 //  Created by Manuel S. Gomez on 1/23/19.
 //  Copyright © 2019 codingManu. All rights reserved.
