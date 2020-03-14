@@ -3,38 +3,68 @@ name: iOS-CI
 on:
   push:
     branches:
-      - develop
+      - development
       - master
       - release/*
       - hotfix/*
 
 
 jobs:
-  clean:
-    runs-on: macOS-latest
+  build:
+    runs-on: macos-latest
     
     steps:
     - uses: actions/checkout@v1
+
+    - name: Cache Project
+      id: cache-project
+      uses: actions/cache@v1
+      with:
+        path: .
+        key: ${{ runner.os }}-geojsonutils-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-geojsonutils-${{ github.sha }}
+
+    - name: Install xcpretty
+      run: gem install xcpretty
+    
     - name: Cleaning the project...
       run:
-        xcodebuild clean -project GeoJsonUtilsApp/GeoJsonUtilsApp.xcodeproj -scheme GeoJsonUtilsApp | xcpretty
-        
-  build:
-    needs: clean
-    runs-on: macOS-latest
-    
-    steps:
-    - uses: actions/checkout@v1
-    - name: Building the project...
-      run:
-        xcodebuild -project GeoJsonUtilsApp/GeoJsonUtilsApp.xcodeproj -scheme GeoJsonUtilsApp -allowProvisioningUpdates | xcpretty
-        
+       xcodebuild \
+       -project GeoJsonUtilsApp/GeoJsonUtilsApp.xcodeproj \
+       -scheme GeoJsonUtilsApp \
+       clean | xcpretty
+
+    - name: Build app
+      run: |
+        xcodebuild  \
+          -project GeoJsonUtilsApp/GeoJsonUtilsApp.xcodeproj \
+          -scheme GeoJsonUtilsApp \
+          -derivedDataPath ./derivedData \
+          -destination 'platform=iOS Simulator,name=iPhone 11,OS=13.3' \
+          build-for-testing | xcpretty && exit ${PIPESTATUS[0]}
+
   test:
-    needs: [clean, build]
-    runs-on: macOS-latest
+    needs: build
+
+    runs-on: macos-latest
     
     steps:
-    - uses: actions/checkout@v1
-    - name: Running the project's tests...
-      run:
-        xcodebuild test -project GeoJsonUtilsApp/GeoJsonUtilsApp.xcodeproj -scheme GeoJsonUtilsApp -destination 'platform=iOS Simulator,name=iPhone Xs,OS=latest' | xcpretty -s
+
+    - name: Cache Project
+      id: cache-project
+      uses: actions/cache@v1
+      with:
+        path: .
+        key: ${{ runner.os }}-geojsonutils-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-geojsonutils-${{ github.sha }}
+
+    - name: Run Unit Tests
+      run: |
+        xcodebuild  \
+          -project GeoJsonUtilsApp/GeoJsonUtilsApp.xcodeproj \
+          -scheme GeoJsonUtilsApp \
+          -derivedDataPath ./derivedData \
+          -destination 'platform=iOS Simulator,name=iPhone 11,OS=13.3' \
+          test-without-building | xcpretty && exit ${PIPESTATUS[0]}
