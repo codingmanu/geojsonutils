@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8009044F23235C7C008BFC6C /* MapKitToolsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8009044E23235C7C008BFC6C /* MapKitToolsTests.swift */; };
+		8009044F23235C7C008BFC6C /* MapKitToolsUnitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8009044E23235C7C008BFC6C /* MapKitToolsUnitTests.swift */; };
 		8026723F21F97F3E00F79328 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8026723E21F97F3E00F79328 /* AppDelegate.swift */; };
 		8026724121F97F3E00F79328 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8026724021F97F3E00F79328 /* ViewController.swift */; };
 		8026724421F97F3E00F79328 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8026724221F97F3E00F79328 /* Main.storyboard */; };
@@ -24,10 +24,11 @@
 		8026726621F9855600F79328 /* polygon.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 8026726021F9855600F79328 /* polygon.geojson */; };
 		8026726721F9855600F79328 /* lineString.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 8026726121F9855600F79328 /* lineString.geojson */; };
 		8026726821F9855600F79328 /* feature.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 8026726221F9855600F79328 /* feature.geojson */; };
-		803E504F21FF6C4F00699E12 /* GeoJsonUtilsAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 803E504E21FF6C4F00699E12 /* GeoJsonUtilsAppTests.swift */; };
+		803E504F21FF6C4F00699E12 /* GeoJsonUnitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 803E504E21FF6C4F00699E12 /* GeoJsonUnitTests.swift */; };
 		804B2F35239D76B400EB7B1E /* trail.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 804B2F34239D76B400EB7B1E /* trail.geojson */; };
 		8054D15A21FE36EA00211E72 /* bids.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 8054D15921FE36EA00211E72 /* bids.geojson */; };
 		807C6A7C2324194800B32BFC /* track_points.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 807C6A7B2324194800B32BFC /* track_points.geojson */; };
+		80CE72E2241BBF0B00991AEC /* PerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80CE72E1241BBF0B00991AEC /* PerformanceTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,7 +42,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		8009044E23235C7C008BFC6C /* MapKitToolsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapKitToolsTests.swift; sourceTree = "<group>"; };
+		8009044E23235C7C008BFC6C /* MapKitToolsUnitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapKitToolsUnitTests.swift; sourceTree = "<group>"; };
 		8026723B21F97F3E00F79328 /* GeoJsonUtilsApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GeoJsonUtilsApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8026723E21F97F3E00F79328 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8026724021F97F3E00F79328 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -61,11 +62,14 @@
 		8026726121F9855600F79328 /* lineString.geojson */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lineString.geojson; sourceTree = "<group>"; };
 		8026726221F9855600F79328 /* feature.geojson */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = feature.geojson; sourceTree = "<group>"; };
 		803E504C21FF6C4F00699E12 /* GeoJsonUtilsAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GeoJsonUtilsAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		803E504E21FF6C4F00699E12 /* GeoJsonUtilsAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoJsonUtilsAppTests.swift; sourceTree = "<group>"; };
+		803E504E21FF6C4F00699E12 /* GeoJsonUnitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoJsonUnitTests.swift; sourceTree = "<group>"; };
 		803E505021FF6C4F00699E12 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		804B2F34239D76B400EB7B1E /* trail.geojson */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = trail.geojson; sourceTree = "<group>"; };
 		8054D15921FE36EA00211E72 /* bids.geojson */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bids.geojson; sourceTree = "<group>"; };
 		807C6A7B2324194800B32BFC /* track_points.geojson */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = track_points.geojson; sourceTree = "<group>"; };
+		80CE72DF241BBECC00991AEC /* UnitTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = UnitTests.xctestplan; sourceTree = "<group>"; };
+		80CE72E0241BBEF300991AEC /* Performance.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Performance.xctestplan; sourceTree = "<group>"; };
+		80CE72E1241BBF0B00991AEC /* PerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -152,9 +156,12 @@
 		803E504D21FF6C4F00699E12 /* GeoJsonUtilsAppTests */ = {
 			isa = PBXGroup;
 			children = (
-				803E504E21FF6C4F00699E12 /* GeoJsonUtilsAppTests.swift */,
 				803E505021FF6C4F00699E12 /* Info.plist */,
-				8009044E23235C7C008BFC6C /* MapKitToolsTests.swift */,
+				803E504E21FF6C4F00699E12 /* GeoJsonUnitTests.swift */,
+				8009044E23235C7C008BFC6C /* MapKitToolsUnitTests.swift */,
+				80CE72E1241BBF0B00991AEC /* PerformanceTests.swift */,
+				80CE72DF241BBECC00991AEC /* UnitTests.xctestplan */,
+				80CE72E0241BBEF300991AEC /* Performance.xctestplan */,
 			);
 			path = GeoJsonUtilsAppTests;
 			sourceTree = "<group>";
@@ -283,7 +290,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which swiftlint >/dev/null; then\nswiftlint\nelse\necho \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -306,8 +313,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				803E504F21FF6C4F00699E12 /* GeoJsonUtilsAppTests.swift in Sources */,
-				8009044F23235C7C008BFC6C /* MapKitToolsTests.swift in Sources */,
+				803E504F21FF6C4F00699E12 /* GeoJsonUnitTests.swift in Sources */,
+				8009044F23235C7C008BFC6C /* MapKitToolsUnitTests.swift in Sources */,
+				80CE72E2241BBF0B00991AEC /* PerformanceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

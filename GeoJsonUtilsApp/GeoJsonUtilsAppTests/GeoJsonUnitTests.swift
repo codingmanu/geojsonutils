@@ -84,32 +84,5 @@ class GeoJsonUtilsAppTests: XCTestCase {
             XCTAssertEqual(point.longitude, mkPoint.coordinate.longitude, accuracy: 0.0000000000001)
         }
     }
-
-
-    func testReadingFilePerformance() {
-
-        self.measure {
-            guard let bundlefile = Bundle.main.url(forResource: "nyc_neighborhoods", withExtension: "geojson") else {
-                XCTFail("Test file doesn't exist")
-                return
-            }
-            XCTAssertNotNil(try? Data(contentsOf: bundlefile))
-        }
-    }
-
-    func testDecodingFilePerformance() {
-
-        guard let bundlefile = Bundle.main.url(forResource: "nyc_neighborhoods", withExtension: "geojson") else {
-            XCTFail("Test file doesn't exist")
-            return
-        }
-
-        let data = try? Data(contentsOf: bundlefile)
-
-        self.measure {
-            let decoder = JSONDecoder()
-            XCTAssertNotNil(try? decoder.decode(GJFeatureCollection.self, from: data!))
-        }
-    }
 }
 // swiftlint:enable all
