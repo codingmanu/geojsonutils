@@ -1,6 +1,6 @@
 //
 //  GeoJsonUtils.swift
-//  SwiftCityJSONTest
+//  GeoJsonUtils
 //
 //  Created by Manuel S. Gomez on 1/23/19.
 //  Copyright © 2019 codingManu. All rights reserved.
@@ -10,54 +10,69 @@ import Foundation
 
 class GeoJsonUtils {
 
-    /// Returns a `GJFeatureCollection` decoded from a file.
     ///
+    /// Returns a `GJFeatureCollection` decoded from a file's path.
     /// - Parameters:
-    ///   - file: the resource file name _WITHOUT_ extension.
-    ///   - withExtension: the resource file extension.
-    /// - Returns: a GJFeatureCollection populated with the data in the file.
-    /// - Throws: `GJObjectError.invalidFeatureCollection` if it can't read the collection from the decoded data.
-    static func readGJFeatureCollectionFrom(file: String, withExtension: String) throws -> GJFeatureCollection {
+    ///   - path: The path for the file to read.
+    ///   - completion: Escaping closure with a `Result` type containing a `GJFeatureCollection` populated with the data in the file or a `GJError`.
+    ///
+    static func readGJFeatureCollectionFromFileAt(path: String, completion: @escaping (Result<GJFeatureCollection, GJError>) -> Void ) {
 
-        guard let bundlefile = Bundle.main.url(forResource: file, withExtension: withExtension) else {
-            throw GJObjectError.invalidFeatureCollection
-        }
-        
-        let data = try? Data(contentsOf: bundlefile)
+        let fileManager = FileManager.default
 
-        let decoder = JSONDecoder()
-        var decodedData: GJFeatureCollection
-
-        do {
-            decodedData = try decoder.decode(GJFeatureCollection.self, from: data!)
-            return decodedData
-
-        } catch let error {
-
-            print(error.localizedDescription)
-            throw GJObjectError.invalidFeatureCollection
+        if fileManager.fileExists(atPath: path) == false {
+            completion(.failure(.readingFile))
+        } else {
+            guard let data = fileManager.contents(atPath: path) else {
+                completion(.failure(.readingData))
+                return
+            }
+            readGJFeatureCollectionFrom(data, completion: completion)
         }
     }
 
-    /// Returns a `GJFeatureCollection` decoded from `Data`.
     ///
-    /// - Parameter data: the `Data` to be decoded.
-    /// - Returns: a GJFeatureCollection populated with the data in the file.
-    /// - Throws: `GJObjectError.invalidFeatureCollection` if it can't read the collection from the decoded data.
-    static func readGJFeatureCollectionFrom(_ data: Data) throws -> GJFeatureCollection {
+    /// Returns a `GJFeatureCollection` decoded from a file in the App's Bundle.
+    ///
+    /// - Parameters:
+    ///   - file: The resource file name **WITHOUT** extension.
+    ///   - withExtension: The resource file extension.
+    ///   - completion: Escaping closure with a `Result` type containing a `GJFeatureCollection` populated with the data in the file or a `GJError`.
+    ///
+    static func readGJFeatureCollectionFromFileInBundle(file: String, withExtension: String, completion: @escaping (Result<GJFeatureCollection, GJError>) -> Void ) {
 
-        let decoder = JSONDecoder()
-        var decodedData: GJFeatureCollection
-
-        do {
-            decodedData = try decoder.decode(GJFeatureCollection.self, from: data)
-            return decodedData
-
-        } catch let error {
-
-            print(error.localizedDescription)
-            throw GJObjectError.invalidFeatureCollection
+        guard let bundlefile = Bundle.main.url(forResource: file, withExtension: withExtension) else {
+            completion(.failure(.readingFile))
+            return
         }
 
+        guard let data = try? Data(contentsOf: bundlefile) else {
+            completion(.failure(.readingData))
+            return
+        }
+
+        readGJFeatureCollectionFrom(data, completion: completion)
+    }
+
+    ///
+    /// Returns a `GJFeatureCollection` decoded from `Data`.
+    ///
+    /// - Parameters:
+    ///   - data: The `Data` to be decoded.
+    ///   - completion: Escaping closure with a `Result` type containing a `GJFeatureCollection` populated with the data in the file or a `GJError`.
+    ///
+    static func readGJFeatureCollectionFrom(_ data: Data, completion: @escaping (Result<GJFeatureCollection, GJError>) -> Void ) {
+
+        DispatchQueue.global(qos: .userInteractive).async {
+            do {
+                let decoder = JSONDecoder()
+
+                let featureCollection = try decoder.decode(GJFeatureCollection.self, from: data)
+                completion(.success(featureCollection))
+
+            } catch {
+                completion(.failure(.decoding))
+            }
+        }
     }
 }

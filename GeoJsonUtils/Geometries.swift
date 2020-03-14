@@ -1,6 +1,6 @@
 //
 //  Geometries.swift
-//  SwiftCityJSONTest
+//  GeoJsonUtils
 //
 //  Created by Manuel S. Gomez on 12/23/18.
 //  Copyright © 2018 codingManu. All rights reserved.
@@ -41,6 +41,21 @@ class GJPoint: Decodable {
     }
 }
 
+class GJMultiPoint: Decodable {
+    var type: GJGeometryType = .multiPoint
+    var coordinates: [[Double]]
+
+    init(_ coordinates: [[Double]]) {
+        self.coordinates = coordinates
+    }
+
+    init(_ coordinates: [GJPoint]) {
+        self.coordinates = coordinates.map({ (point) -> [Double] in
+            return point.coordinates
+        })
+    }
+}
+
 class GJLineString: Decodable {
     var type: GJGeometryType = .lineString
     var coordinates: [[Double]]
@@ -52,6 +67,21 @@ class GJLineString: Decodable {
     init(_ coordinates: [GJPoint]) {
         self.coordinates = coordinates.map({ (point) -> [Double] in
             return point.coordinates
+        })
+    }
+}
+
+class GJMultiLineString: Decodable {
+    var type: GJGeometryType = .multiLineString
+    var coordinates: [[[Double]]]
+
+    init(_ coordinates: [[[Double]]]) {
+        self.coordinates = coordinates
+    }
+
+    init(_ coordinates: [GJLineString]) {
+        self.coordinates = coordinates.map({ (lineString) -> [[Double]] in
+            return lineString.coordinates
         })
     }
 }
@@ -103,9 +133,33 @@ extension GJPoint {
     }
 }
 
+extension GJMultiPoint {
+
+    private func asCLLocationCoordinate2DArray() -> [CLLocationCoordinate2D] {
+
+        return coordinates.map { (coordinate) -> CLLocationCoordinate2D in
+            let lat = coordinate[1]
+            let lon = coordinate[0]
+
+            return CLLocationCoordinate2D(latitude: lat, longitude: lon)
+        }
+    }
+
+    func asMKPointAnnotationArray() -> [MKPointAnnotation] {
+
+        let locations = self.asCLLocationCoordinate2DArray()
+
+        return locations.map { (location) -> MKPointAnnotation in
+            let anno = MKPointAnnotation()
+            anno.coordinate = location
+            return anno
+        }
+    }
+}
+
 extension GJLineString {
 
-    private func getPoints() -> [GJPoint] {
+    fileprivate func getPoints() -> [GJPoint] {
         let points = coordinates.map { (coordinate) -> GJPoint in
             return GJPoint(coordinate)
         }
@@ -114,11 +168,44 @@ extension GJLineString {
 
     func asMKPolyLine() -> MKPolyline {
 
-        let coords = self.getPoints().compactMap({ (point) -> CLLocationCoordinate2D in
-            return point.asMKPointAnnotation().coordinate
-        })
+        let coordinates = self.getPoints().map { (point) -> CLLocationCoordinate2D in
+            return CLLocationCoordinate2D(latitude: point.coordinates[1], longitude: point.coordinates[0])
+        }
 
-        return MKPolyline(coordinates: coords, count: coords.count)
+        return MKPolyline(coordinates: coordinates, count: coordinates.count)
+    }
+
+    func isClosed() -> Bool {
+        return coordinates[0] == coordinates[coordinates.count-1]
+    }
+}
+
+extension GJMultiLineString {
+
+    fileprivate func getLines() -> [GJLineString] {
+        let lines = coordinates.map { (line) -> GJLineString in
+            return GJLineString(line)
+        }
+        return lines
+    }
+
+    func asMKPolyLineArray() -> [MKPolyline] {
+
+        var lines = [MKPolyline]()
+
+        self.getLines().forEach { (line) in
+
+            var coords = [CLLocationCoordinate2D]()
+
+            let points = line.getPoints().compactMap({ (point) -> CLLocationCoordinate2D in
+                return point.asMKPointAnnotation().coordinate
+            })
+            coords.append(contentsOf: points)
+
+            lines.append(MKPolyline(coordinates: coords, count: coords.count))
+        }
+
+        return lines
     }
 }
 

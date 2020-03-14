@@ -1,6 +1,6 @@
 //
 //  GeoJSONObject.swift
-//  SwiftCityJSONTest
+//  GeoJsonUtils
 //
 //  Created by Manuel S. Gomez on 12/20/18.
 //  Copyright © 2018 codingManu. All rights reserved.
@@ -39,17 +39,33 @@ enum GJObjectError: Error {
     case invalidPropertyKey
 }
 
+enum GJError: Error {
+    case readingFile
+    case readingData
+    case decoding
+}
+
 // MARK: - Models for Feature & FeatureCollection
-struct GJFeature: Decodable {
+class GJFeature: Decodable {
+
+    /// Feature Properties
     var type: GJObjectType = .feature
     var id: String?
     var properties: [String: Any]
     var geometryType: GJGeometryType
     var geometry: Decodable
-    var mkGeometry: MKShape?
-    var multiMkGeometry: [MKShape]?
 
-    init(from decoder: Decoder) throws {
+    /// Lazy MapKit Geometries
+    lazy var mkGeometry: MKShape? = {
+        return buildMKGeometry()
+    }()
+
+    lazy var multiMkGeometry: [MKShape]? = {
+        return buildMultiMKGeometry()
+    }()
+
+    /// Init / Decoding
+    required init(from decoder: Decoder) throws {
 
         let container = try decoder.container(keyedBy: GJFeatureCodingKeys.self)
 
@@ -64,45 +80,106 @@ struct GJFeature: Decodable {
         let geometryContainer = try container.nestedContainer(keyedBy: GJGeometryCodingKeys.self, forKey: .geometry)
         geometryType = try geometryContainer.decode(GJGeometryType.self, forKey: .type)
 
-        // Decodes the `geometry` property with one of the possible classes
+        /// Decodes the `geometry` property with one of the possible classes and tries to assign an `id` to mkGeometry or each multiMkGeometry item.
         switch geometryType {
         case .point:
             let point: GJPoint = try container.decode(GJPoint.self, forKey: .geometry)
             self.geometry = point
-            mkGeometry = point.asMKPointAnnotation()
-            if id != nil {
-                mkGeometry?.title = id
-            }
+
+        case .multiPoint:
+            let multiPoint = try container.decode(GJMultiPoint.self, forKey: .geometry)
+            self.geometry = multiPoint
+
         case .lineString:
             let line = try container.decode(GJLineString.self, forKey: .geometry)
             self.geometry = line
-            mkGeometry = line.asMKPolyLine()
-            if id != nil {
-                mkGeometry?.title = id
-            }
+
+        case .multiLineString:
+            let multiLine = try container.decode(GJMultiLineString.self, forKey: .geometry)
+            self.geometry = multiLine
+
         case .polygon:
             let polygon = try container.decode(GJPolygon.self, forKey: .geometry)
             self.geometry = polygon
-            mkGeometry = polygon.asMKPolygon()
-            if id != nil {
-                mkGeometry?.title = id
-            }
+
         case .multiPolygon:
             let multiPolygon = try container.decode(GJMultiPolygon.self, forKey: .geometry)
             self.geometry = multiPolygon
+        }
+    }
 
-            multiMkGeometry = [MKShape]()
+    /// MapKit entity builder for single geometries. Adds the `id` as the MapKit object title.
+    private func buildMKGeometry() -> MKShape? {
+
+        var mkGeometry = MKShape()
+
+        switch self.geometryType {
+        case .point:
+            guard let point: GJPoint = self.geometry as? GJPoint else { return nil }
+            mkGeometry = point.asMKPointAnnotation()
+            if id != nil {
+                mkGeometry.title = id
+            }
+        case .lineString:
+            guard let line: GJLineString = self.geometry as? GJLineString else { return nil }
+            mkGeometry = line.asMKPolyLine()
+            if id != nil {
+                mkGeometry.title = id
+            }
+        case .polygon:
+            guard let polygon: GJPolygon = self.geometry as? GJPolygon else { return nil }
+
+            mkGeometry = polygon.asMKPolygon()
+            if id != nil {
+                mkGeometry.title = id
+            }
+        default:
+            return nil
+        }
+        return mkGeometry
+    }
+
+    /// MapKit entity builder for multi-geometries. Adds the `id` as the MapKit objects title.
+    private func buildMultiMKGeometry() -> [MKShape]? {
+
+        var multiMkGeometry = [MKShape]()
+
+        switch self.geometryType {
+        case .multiPoint:
+            guard let multiPoint: GJMultiPoint = self.geometry as? GJMultiPoint else { return nil }
+
+            for annotation in multiPoint.asMKPointAnnotationArray() {
+                if id != nil {
+                    annotation.title = id
+                }
+                multiMkGeometry.append(annotation)
+            }
+
+        case .multiLineString:
+            guard let multiLine: GJMultiLineString = self.geometry as? GJMultiLineString else { return nil }
+
+            for lineString in multiLine.asMKPolyLineArray() {
+                if id != nil {
+                    lineString.title = id
+                }
+                multiMkGeometry.append(lineString)
+            }
+
+        case .multiPolygon:
+            guard let multiPolygon: GJMultiPolygon = self.geometry as? GJMultiPolygon else { return nil }
 
             for polygon in multiPolygon.getPolygons() {
                 let mkPolygon = polygon.asMKPolygon()
                 if id != nil {
                     mkPolygon.title = id
                 }
-                multiMkGeometry?.append(mkPolygon)
+                multiMkGeometry.append(mkPolygon)
             }
+
         default:
-            throw GJGeometryError.invalidType
+            return nil
         }
+        return multiMkGeometry
     }
 }
 
@@ -122,14 +199,13 @@ class GJFeatureCollection: Decodable {
 
 }
 
-
 extension GJFeature {
 
     /// Turns any selected property into the `MK` Object Title
     ///
     /// - Parameter key:  _String_, defines the dictionary key to retrieve the value from.
     /// - Throws: throws _GJObjectError.invalidPropertyKey_ if the key is invalid or not found.
-    func updateIdFromProperty(forKey key: String) throws {
+    func updateTitleFromProperty(forKey key: String) throws {
         var value = id
         if let doubleValue = properties[key] as? Double {
             value = String(doubleValue)
@@ -141,31 +217,39 @@ extension GJFeature {
 
         switch geometryType {
         case .point:
-            let anno = mkGeometry as? MKPointAnnotation
-            if anno != nil {
-                anno!.title = value
+            guard let annotation = self.mkGeometry as? MKPointAnnotation else { return }
+            annotation.title = value
+
+        case .multiPoint:
+            guard let multiMkGeometry = self.multiMkGeometry else { return }
+
+            for geometry in multiMkGeometry {
+                guard let annotation = geometry as? MKPointAnnotation else { return }
+                annotation.title = value
             }
+
         case .lineString:
-            let overlay = mkGeometry as? MKPolyline
-            if overlay != nil {
-                overlay!.title = value
+            guard let overlay = self.mkGeometry as? MKPolyline else { return }
+            overlay.title = value
+
+        case .multiLineString:
+            guard let multiMkGeometry = self.multiMkGeometry else { return }
+
+            for geometry in multiMkGeometry {
+                guard let overlay = geometry as? MKPolyline else { return }
+                overlay.title = value
             }
+
         case .polygon:
-            let overlay = mkGeometry as? MKPolygon
-            if overlay != nil {
-                overlay!.title = value
-            }
+            guard let overlay = self.mkGeometry as? MKPolygon else { return }
+            overlay.title = value
+
         case .multiPolygon:
-            if multiMkGeometry != nil {
-                for geometry in multiMkGeometry! {
-                    let overlay = geometry as? MKPolygon
-                    if overlay != nil {
-                        overlay!.title = value
-                    }
-                }
+            guard let multiMkGeometry = self.multiMkGeometry else { return }
+            for geometry in multiMkGeometry {
+                guard let overlay = geometry as? MKPolygon else { return }
+                overlay.title = value
             }
-        default:
-            break
         }
     }
 }
