@@ -16,7 +16,7 @@ class GeoJsonUtils {
     ///   - path: The path for the file to read.
     ///   - completion: Escaping closure with a `Result` type containing a `GJFeatureCollection` populated with the data in the file or a `GJError`.
     ///
-    static func readGJFeatureCollectionFrom(path: String, completion: @escaping (Result<GJFeatureCollection, GJError>) -> Void ) {
+    static func readGJFeatureCollectionFromFileAt(path: String, completion: @escaping (Result<GJFeatureCollection, GJError>) -> Void ) {
 
         let fileManager = FileManager.default
 
@@ -39,7 +39,7 @@ class GeoJsonUtils {
     ///   - withExtension: The resource file extension.
     ///   - completion: Escaping closure with a `Result` type containing a `GJFeatureCollection` populated with the data in the file or a `GJError`.
     ///
-    static func readGJFeatureCollectionFromBundle(file: String, withExtension: String, completion: @escaping (Result<GJFeatureCollection, GJError>) -> Void ) {
+    static func readGJFeatureCollectionFromFileInBundle(file: String, withExtension: String, completion: @escaping (Result<GJFeatureCollection, GJError>) -> Void ) {
 
         guard let bundlefile = Bundle.main.url(forResource: file, withExtension: withExtension) else {
             completion(.failure(.readingFile))

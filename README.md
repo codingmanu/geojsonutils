@@ -1,4 +1,4 @@
-# GeoJSONUtils
+# GeoJsonUtils
 
 #### Library to read, parse and transform GeoJSON data into Swift and MapKit objects.
 
@@ -9,20 +9,55 @@
 ---
 
 ### Made in Swift 5
-Requires Xcode 10.2 and Swift 5.
+Requires Xcode 10.2.
 
 ### Installation
 Drop in the GeoJsonUtils folder to your Xcode project (make sure to enable "Copy items if needed" and "Create groups").
 
-### Usage with Code
-Loading from file:
+### Usage:
+
+Reading functions have been refactored to use closures to avoid clogging the main thread on large datasets.
+
+#### Loading from file (Bundle):
 ```swift
-    guard let featureCollection = try? GeoJsonUtils.readGJFeatureCollectionFrom(file: "nyc_neighborhoods",
-                                                                                withExtension: "geojson") else { return }
-    mapView.loadGJFeatureCollection(featureCollection)
+    GeoJsonUtils.readGJFeatureCollectionFromFileInBundle(file: "nyc_neighborhoods",
+                                                   withExtension: "geojson") { [unowned self] (result) in
+        switch result {
+        case .failure(let error):
+            print(error.localizedDescription)
+        case .success(let featureCollection):
+            self.mapView.loadGJFeatureCollection(featureCollection)
+        }
+    }
 ```
 
-\* Play with the demo app for a sample.
+#### Loading from file (path):
+```swift
+    guard let path = URL(...).path else { return }
+
+    GeoJsonUtils.readGJFeatureCollectionFromFileAt(path: path) { [unowned self] (result) in
+        switch result {
+        case .failure(let error):
+            print(error.localizedDescription)
+        case .success(let featureCollection):
+            self.mapView.loadGJFeatureCollection(featureCollection)
+        }
+    }
+```
+
+#### Loading from Data:
+```swift
+    let data = Data() {...}
+
+    GeoJsonUtils.readGJFeatureCollectionFrom(data) { [unowned self] (result) in
+        switch result {
+        case .failure(let error):
+            print(error.localizedDescription)
+        case .success(let featureCollection):
+            self.mapView.loadGJFeatureCollection(featureCollection)
+        }
+    }
+```
 
 ### ChangeLog
 - At [ChangeLog](https://github.com/codingManu/GeoJsonUtils/wiki/CHANGELOG) wiki page
