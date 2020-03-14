@@ -1,0 +1,40 @@
+name: iOS-CI
+
+on:
+  push:
+    branches:
+      - develop
+      - master
+      - release/*
+      - hotfix/*
+
+
+jobs:
+  clean:
+    runs-on: macOS-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: Cleaning the project...
+      run:
+        xcodebuild clean -project GeoJsonUtilsApp/GeoJsonUtilsApp.xcodeproj -scheme GeoJsonUtilsApp | xcpretty
+        
+  build:
+    needs: clean
+    runs-on: macOS-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: Building the project...
+      run:
+        xcodebuild -project GeoJsonUtilsApp/GeoJsonUtilsApp.xcodeproj -scheme GeoJsonUtilsApp -allowProvisioningUpdates | xcpretty
+        
+  test:
+    needs: [clean, build]
+    runs-on: macOS-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: Running the project's tests...
+      run:
+        xcodebuild test -project GeoJsonUtilsApp/GeoJsonUtilsApp.xcodeproj -scheme GeoJsonUtilsApp -destination 'platform=iOS Simulator,name=iPhone Xs,OS=latest' | xcpretty -s
