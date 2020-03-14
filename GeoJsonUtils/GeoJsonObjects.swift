@@ -39,6 +39,12 @@ enum GJObjectError: Error {
     case invalidPropertyKey
 }
 
+enum GJError: Error {
+    case readingFile
+    case readingData
+    case decoding
+}
+
 // MARK: - Models for Feature & FeatureCollection
 class GJFeature: Decodable {
 

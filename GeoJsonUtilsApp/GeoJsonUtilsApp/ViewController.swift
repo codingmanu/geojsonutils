@@ -95,7 +95,7 @@ extension ViewController {
         setNewYorkRegion()
 
         // swiftlint:disable line_length
-        GeoJsonUtils.readGJFeatureCollectionFrom(file: "nyc_neighborhoods", withExtension: "geojson") { [unowned self] (result) in
+        GeoJsonUtils.readGJFeatureCollectionFromBundle(file: "nyc_neighborhoods", withExtension: "geojson") { [unowned self] (result) in
             switch result {
             case .failure(let error):
                 print(error.localizedDescription)
@@ -112,7 +112,7 @@ extension ViewController {
         resetMap()
         setFloridaRegion()
 
-        GeoJsonUtils.readGJFeatureCollectionFrom(file: "trail", withExtension: "geojson") { [unowned self] (result) in
+        GeoJsonUtils.readGJFeatureCollectionFromBundle(file: "trail", withExtension: "geojson") { [unowned self] (result) in
 
             switch result {
             case .failure(let error):
