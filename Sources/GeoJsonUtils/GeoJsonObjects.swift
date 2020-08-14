@@ -49,18 +49,18 @@ public enum GJError: Error {
 public class GJFeature: Decodable {
 
     /// Feature Properties
-    var type: GJObjectType = .feature
-    var id: String?
-    var properties: [String: Any]
-    var geometryType: GJGeometryType
-    var geometry: Decodable
+    public var type: GJObjectType = .feature
+    public var id: String?
+    public var properties: [String: Any]
+    public var geometryType: GJGeometryType
+    public var geometry: Decodable
 
     /// Lazy MapKit Geometries
-    lazy var mkGeometry: MKShape? = {
+    lazy public var mkGeometry: MKShape? = {
         return buildMKGeometry()
     }()
 
-    lazy var multiMkGeometry: [MKShape]? = {
+    lazy public var multiMkGeometry: [MKShape]? = {
         return buildMultiMKGeometry()
     }()
 
@@ -110,8 +110,8 @@ public class GJFeature: Decodable {
 }
 
 public class GJFeatureCollection: Decodable {
-    var type: GJObjectType = .featureCollection
-    var features: [GJFeature]
+    public var type: GJObjectType = .featureCollection
+    public var features: [GJFeature]
 
     init(_ features: [GJFeature]) {
         self.features = features

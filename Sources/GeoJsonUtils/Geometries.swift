@@ -33,8 +33,8 @@ public enum GJGeometryCodingKeys: String, CodingKey {
 
 // MARK: - Models
 public class GJPoint: Decodable {
-    var type: GJGeometryType = .point
-    var coordinates: [Double]
+    public var type: GJGeometryType = .point
+    public var coordinates: [Double]
 
     init(_ coordinates: [Double]) {
         self.coordinates = coordinates
@@ -42,8 +42,8 @@ public class GJPoint: Decodable {
 }
 
 public class GJMultiPoint: Decodable {
-    var type: GJGeometryType = .multiPoint
-    var coordinates: [[Double]]
+    public var type: GJGeometryType = .multiPoint
+    public var coordinates: [[Double]]
 
     init(_ coordinates: [[Double]]) {
         self.coordinates = coordinates
@@ -57,8 +57,8 @@ public class GJMultiPoint: Decodable {
 }
 
 public class GJLineString: Decodable {
-    var type: GJGeometryType = .lineString
-    var coordinates: [[Double]]
+    public var type: GJGeometryType = .lineString
+    public var coordinates: [[Double]]
 
     init(_ coordinates: [[Double]]) {
         self.coordinates = coordinates
@@ -72,8 +72,8 @@ public class GJLineString: Decodable {
 }
 
 public class GJMultiLineString: Decodable {
-    var type: GJGeometryType = .multiLineString
-    var coordinates: [[[Double]]]
+    public var type: GJGeometryType = .multiLineString
+    public var coordinates: [[[Double]]]
 
     init(_ coordinates: [[[Double]]]) {
         self.coordinates = coordinates
@@ -87,8 +87,8 @@ public class GJMultiLineString: Decodable {
 }
 
 public class GJPolygon: Decodable {
-    var type: GJGeometryType = .polygon
-    var coordinates: [[[Double]]]
+    public var type: GJGeometryType = .polygon
+    public var coordinates: [[[Double]]]
 
     init(_ coordinates: [[[Double]]]) {
         self.coordinates = coordinates
@@ -102,8 +102,8 @@ public class GJPolygon: Decodable {
 }
 
 public class GJMultiPolygon: Decodable {
-    var type: GJGeometryType = .multiPolygon
-    var coordinates: [[[[Double]]]]
+    public var type: GJGeometryType = .multiPolygon
+    public var coordinates: [[[[Double]]]]
 
     init(_ coordinates: [[[[Double]]]]) {
         self.coordinates = coordinates
