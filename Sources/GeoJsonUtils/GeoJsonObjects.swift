@@ -69,13 +69,15 @@ public class GJFeature: Decodable {
 
         let container = try decoder.container(keyedBy: GJFeatureCodingKeys.self)
 
-        if let value = try? container.decode(Double.self, forKey: .id) {
-            id = String(value)
+        if let doubleIdValue = try? container.decode(Double.self, forKey: .id) {
+            id = String(doubleIdValue)
+        } if let intIdValue = try? container.decode(Int.self, forKey: .id) {
+            id = String(intIdValue)
         } else {
             id = try? container.decode(String.self, forKey: .id)
         }
 
-        properties = try container.decode(Dictionary<String, Any>.self, forKey: .properties)
+        properties = (try? container.decode(Dictionary<String, Any>.self, forKey: .properties)) ?? [:]
 
         let geometryContainer = try container.nestedContainer(keyedBy: GJGeometryCodingKeys.self, forKey: .geometry)
         geometryType = try geometryContainer.decode(GJGeometryType.self, forKey: .type)
