@@ -120,7 +120,8 @@ class GJFeatureCollection: Decodable {
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: GJFeatureCollectionCodingKeys.self)
         type = try container.decode(GJObjectType.self, forKey: .type)
-        features = try container.decode([GJFeature].self, forKey: .features)
+
+        features = try container.decode(FailableDecodableArray<GJFeature>.self, forKey: .features).elements
     }
 
 }
