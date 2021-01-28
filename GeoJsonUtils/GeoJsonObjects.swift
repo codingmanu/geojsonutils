@@ -9,7 +9,7 @@
 import Foundation
 import MapKit
 
-// MARK: - GeoJSON Object Type: Feature or FeatureCollection
+// MARK: - GeoJSON Object Types
 enum GJObjectType: String, Codable {
     case feature = "Feature"
     case featureCollection = "FeatureCollection"
@@ -107,6 +107,26 @@ class GJFeature: Decodable {
             self.geometry = multiPolygon
         }
     }
+}
+
+class GJFeatureCollection: Decodable {
+    var type: GJObjectType = .featureCollection
+    var features: [GJFeature]
+
+    init(_ features: [GJFeature]) {
+        self.features = features
+    }
+
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: GJFeatureCollectionCodingKeys.self)
+        type = try container.decode(GJObjectType.self, forKey: .type)
+        features = try container.decode([GJFeature].self, forKey: .features)
+    }
+
+}
+
+// MARK: - MapKit integration
+extension GJFeature {
 
     /// MapKit entity builder for single geometries. Adds the `id` as the MapKit object title.
     private func buildMKGeometry() -> MKShape? {
@@ -181,25 +201,6 @@ class GJFeature: Decodable {
         }
         return multiMkGeometry
     }
-}
-
-class GJFeatureCollection: Decodable {
-    var type: GJObjectType = .featureCollection
-    var features: [GJFeature]
-
-    init(_ features: [GJFeature]) {
-        self.features = features
-    }
-
-    required init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: GJFeatureCollectionCodingKeys.self)
-        type = try container.decode(GJObjectType.self, forKey: .type)
-        features = try container.decode([GJFeature].self, forKey: .features)
-    }
-
-}
-
-extension GJFeature {
 
     /// Turns any selected property into the `MK` Object Title
     ///
