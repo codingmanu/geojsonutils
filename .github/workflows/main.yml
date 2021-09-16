@@ -32,7 +32,14 @@ jobs:
       run: swift build -v
 
     - name: Build for iOS
-      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -scheme geojsonutils -destination "platform=iOS Simulator,OS=latest,name=iPhone 12" -quiet
+      run: |
+        set -o pipefail && env NSUnbufferedIO=YES \
+        xcodebuild \
+          -scheme geojsonutils \
+          -derivedDataPath ./derivedData \
+          -destination "platform=iOS Simulator,OS=latest,name=iPhone 12" \
+          -quiet \
+          build-for-testing 
 
   test:
     needs: build
@@ -53,4 +60,11 @@ jobs:
       run: swift test -v
 
     - name: Run iOS tests
-      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -scheme geojsonutils -destination "platform=iOS Simulator,OS=latest,name=iPhone 12" -quiet
+      run: |
+        set -o pipefail && env NSUnbufferedIO=YES \
+          xcodebuild \
+            -scheme geojsonutils \
+            -derivedDataPath ./derivedData \
+            -destination "platform=iOS Simulator,OS=latest,name=iPhone 12" \
+            -quiet \
+            test-without-building
