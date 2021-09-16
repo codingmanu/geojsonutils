@@ -46,7 +46,7 @@ public enum GJError: Error {
 }
 
 // MARK: - Models for Feature & FeatureCollection
-public class GJFeature: Codable {
+open class GJFeature: Codable {
 
     /// Feature Properties
     public var type: GJObjectType = .feature
@@ -141,7 +141,7 @@ public class GJFeature: Codable {
     }
 }
 
-public class GJFeatureCollection: Codable {
+open class GJFeatureCollection: Codable {
     public var type: GJObjectType = .featureCollection
     public var features: [GJFeature]
 
