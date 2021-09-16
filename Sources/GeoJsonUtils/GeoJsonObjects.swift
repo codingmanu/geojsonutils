@@ -64,6 +64,13 @@ open class GJFeature: Codable {
         return buildMultiMKGeometry()
     }()
 
+    public init(id: String?, properties: [String: Any], geometryType: GJGeometryType, geometry: Codable) {
+        self.id = id
+        self.properties = properties
+        self.geometryType = geometryType
+        self.geometry = geometry
+    }
+
     /// Init / Decoding
     public required init(from decoder: Decoder) throws {
 
