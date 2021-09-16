@@ -71,7 +71,7 @@ public class GJFeature: Decodable {
 
         if let doubleIdValue = try? container.decode(Double.self, forKey: .id) {
             id = String(doubleIdValue)
-        } if let intIdValue = try? container.decode(Int.self, forKey: .id) {
+        } else if let intIdValue = try? container.decode(Int.self, forKey: .id) {
             id = String(intIdValue)
         } else {
             id = try? container.decode(String.self, forKey: .id)
