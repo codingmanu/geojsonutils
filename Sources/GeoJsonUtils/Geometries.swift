@@ -36,7 +36,7 @@ public class GJPoint: Codable {
     public var type: GJGeometryType = .point
     public var coordinates: [Double]
 
-    init(_ coordinates: [Double]) {
+    public init(_ coordinates: [Double]) {
         self.coordinates = coordinates
     }
 }
@@ -45,11 +45,11 @@ public class GJMultiPoint: Codable {
     public var type: GJGeometryType = .multiPoint
     public var coordinates: [[Double]]
 
-    init(_ coordinates: [[Double]]) {
+    public init(_ coordinates: [[Double]]) {
         self.coordinates = coordinates
     }
 
-    init(_ coordinates: [GJPoint]) {
+    public init(_ coordinates: [GJPoint]) {
         self.coordinates = coordinates.map({ (point) -> [Double] in
             return point.coordinates
         })
@@ -60,11 +60,11 @@ public class GJLineString: Codable {
     public var type: GJGeometryType = .lineString
     public var coordinates: [[Double]]
 
-    init(_ coordinates: [[Double]]) {
+    public init(_ coordinates: [[Double]]) {
         self.coordinates = coordinates
     }
 
-    init(_ coordinates: [GJPoint]) {
+    public init(_ coordinates: [GJPoint]) {
         self.coordinates = coordinates.map({ (point) -> [Double] in
             return point.coordinates
         })
@@ -75,11 +75,11 @@ public class GJMultiLineString: Codable {
     public var type: GJGeometryType = .multiLineString
     public var coordinates: [[[Double]]]
 
-    init(_ coordinates: [[[Double]]]) {
+    public init(_ coordinates: [[[Double]]]) {
         self.coordinates = coordinates
     }
 
-    init(_ coordinates: [GJLineString]) {
+    public init(_ coordinates: [GJLineString]) {
         self.coordinates = coordinates.map({ (lineString) -> [[Double]] in
             return lineString.coordinates
         })
@@ -90,11 +90,11 @@ public class GJPolygon: Codable {
     public var type: GJGeometryType = .polygon
     public var coordinates: [[[Double]]]
 
-    init(_ coordinates: [[[Double]]]) {
+    public init(_ coordinates: [[[Double]]]) {
         self.coordinates = coordinates
     }
 
-    init(_ coordinates: [GJLineString]) {
+    public init(_ coordinates: [GJLineString]) {
         self.coordinates = coordinates.map({ (line) -> [[Double]] in
             return line.coordinates
         })
@@ -105,11 +105,11 @@ public class GJMultiPolygon: Codable {
     public var type: GJGeometryType = .multiPolygon
     public var coordinates: [[[[Double]]]]
 
-    init(_ coordinates: [[[[Double]]]]) {
+    public init(_ coordinates: [[[[Double]]]]) {
         self.coordinates = coordinates
     }
 
-    init(_ coordinates: [GJPolygon]) {
+    public init(_ coordinates: [GJPolygon]) {
         self.coordinates = coordinates.map({ (polygon) -> [[[Double]]] in
             return polygon.coordinates
         })
