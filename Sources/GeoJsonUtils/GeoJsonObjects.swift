@@ -50,7 +50,7 @@ open class GJFeature: Codable {
 
     /// Feature Properties
     public var type: GJObjectType = .feature
-    public var id: String?
+    open var id: String?
     public var properties: [String: Any]
     public var geometryType: GJGeometryType
     public var geometry: Codable
@@ -73,6 +73,8 @@ open class GJFeature: Codable {
             id = String(doubleIdValue)
         } else if let intIdValue = try? container.decode(Int.self, forKey: .id) {
             id = String(intIdValue)
+        } else if let uuidValue = try? container.decode(UUID.self, forKey: .id) {
+            id = uuidValue.uuidString
         } else {
             id = try? container.decode(String.self, forKey: .id)
         }
