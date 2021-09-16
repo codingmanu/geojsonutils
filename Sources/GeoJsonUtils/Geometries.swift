@@ -10,7 +10,7 @@ import Foundation
 import MapKit
 
 // MARK: - Enums for type, error & coding keys
-public enum GJGeometryType: String, Decodable {
+public enum GJGeometryType: String, Codable {
 
     case point = "Point"
     case lineString = "LineString"
@@ -32,7 +32,7 @@ public enum GJGeometryCodingKeys: String, CodingKey {
 }
 
 // MARK: - Models
-public class GJPoint: Decodable {
+public class GJPoint: Codable {
     public var type: GJGeometryType = .point
     public var coordinates: [Double]
 
@@ -41,7 +41,7 @@ public class GJPoint: Decodable {
     }
 }
 
-public class GJMultiPoint: Decodable {
+public class GJMultiPoint: Codable {
     public var type: GJGeometryType = .multiPoint
     public var coordinates: [[Double]]
 
@@ -56,7 +56,7 @@ public class GJMultiPoint: Decodable {
     }
 }
 
-public class GJLineString: Decodable {
+public class GJLineString: Codable {
     public var type: GJGeometryType = .lineString
     public var coordinates: [[Double]]
 
@@ -71,7 +71,7 @@ public class GJLineString: Decodable {
     }
 }
 
-public class GJMultiLineString: Decodable {
+public class GJMultiLineString: Codable {
     public var type: GJGeometryType = .multiLineString
     public var coordinates: [[[Double]]]
 
@@ -86,7 +86,7 @@ public class GJMultiLineString: Decodable {
     }
 }
 
-public class GJPolygon: Decodable {
+public class GJPolygon: Codable {
     public var type: GJGeometryType = .polygon
     public var coordinates: [[[Double]]]
 
@@ -101,7 +101,7 @@ public class GJPolygon: Decodable {
     }
 }
 
-public class GJMultiPolygon: Decodable {
+public class GJMultiPolygon: Codable {
     public var type: GJGeometryType = .multiPolygon
     public var coordinates: [[[[Double]]]]
 

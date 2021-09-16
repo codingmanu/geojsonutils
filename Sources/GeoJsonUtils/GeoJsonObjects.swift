@@ -46,14 +46,14 @@ public enum GJError: Error {
 }
 
 // MARK: - Models for Feature & FeatureCollection
-public class GJFeature: Decodable {
+public class GJFeature: Codable {
 
     /// Feature Properties
     public var type: GJObjectType = .feature
     public var id: String?
     public var properties: [String: Any]
     public var geometryType: GJGeometryType
-    public var geometry: Decodable
+    public var geometry: Codable
 
     /// Lazy MapKit Geometries
     lazy public var mkGeometry: MKShape? = {
@@ -109,9 +109,39 @@ public class GJFeature: Decodable {
             self.geometry = multiPolygon
         }
     }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: GJFeatureCodingKeys.self)
+        try container.encode(type, forKey: .type)
+        try container.encode(id, forKey: .id)
+
+        let propertiesData = try JSONSerialization.data(withJSONObject: properties, options: [])
+        try container.encode(propertiesData, forKey: .properties)
+
+        switch geometryType {
+        case .point:
+            guard let point = geometry as? GJPoint else { throw GJObjectError.invalidGeometry }
+            try container.encode(point, forKey: .geometry)
+        case .multiPoint:
+            guard let multiPoint = geometry as? GJMultiPoint else { throw GJObjectError.invalidGeometry }
+            try container.encode(multiPoint, forKey: .geometry)
+        case .lineString:
+            guard let lineString = geometry as? GJLineString else { throw GJObjectError.invalidGeometry }
+            try container.encode(lineString, forKey: .geometry)
+        case .multiLineString:
+            guard let multiLineString = geometry as? GJMultiLineString else { throw GJObjectError.invalidGeometry }
+            try container.encode(multiLineString, forKey: .geometry)
+        case .polygon:
+            guard let polygon = geometry as? GJPolygon else { throw GJObjectError.invalidGeometry }
+            try container.encode(polygon, forKey: .geometry)
+        case .multiPolygon:
+            guard let multiPolygon = geometry as? GJMultiPolygon else { throw GJObjectError.invalidGeometry}
+            try container.encode(multiPolygon, forKey: .geometry)
+        }
+    }
 }
 
-public class GJFeatureCollection: Decodable {
+public class GJFeatureCollection: Codable {
     public var type: GJObjectType = .featureCollection
     public var features: [GJFeature]
 
