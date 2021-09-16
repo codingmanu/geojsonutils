@@ -24,33 +24,22 @@ jobs:
         key: ${{ runner.os }}-geojsonutils-${{ github.sha }}
         restore-keys: |
           ${{ runner.os }}-geojsonutils-${{ github.sha }}
+      
+    - name: Lint
+      run: swiftlint
 
-    - name: Install xcpretty
-      run: gem install xcpretty
-    
-    - name: Cleaning the project...
-      run:
-       xcodebuild \
-       -project GeoJsonUtilsApp/GeoJsonUtilsApp.xcodeproj \
-       -scheme GeoJsonUtilsApp \
-       clean | xcpretty
+    - name: Build for macOS
+      run: swift build -v
 
-    - name: Build app
-      run: |
-        xcodebuild  \
-          -project GeoJsonUtilsApp/GeoJsonUtilsApp.xcodeproj \
-          -scheme GeoJsonUtilsApp \
-          -derivedDataPath ./derivedData \
-          -destination 'platform=iOS Simulator,name=iPhone 11,OS=13.3' \
-          build-for-testing | xcpretty && exit ${PIPESTATUS[0]}
+    - name: Build for iOS
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -scheme geojsonutils -destination "platform=iOS Simulator,OS=latest,name=iPhone 12" -quiet
 
   test:
     needs: build
 
     runs-on: macos-latest
-    
-    steps:
 
+    steps:
     - name: Cache Project
       id: cache-project
       uses: actions/cache@v1
@@ -60,11 +49,8 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-geojsonutils-${{ github.sha }}
 
-    - name: Run Unit Tests
-      run: |
-        xcodebuild  \
-          -project GeoJsonUtilsApp/GeoJsonUtilsApp.xcodeproj \
-          -scheme GeoJsonUtilsApp \
-          -derivedDataPath ./derivedData \
-          -destination 'platform=iOS Simulator,name=iPhone 11,OS=13.3' \
-          test-without-building | xcpretty && exit ${PIPESTATUS[0]}
+    - name: Run macOS tests
+      run: swift test -v
+
+    - name: Run iOS tests
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -scheme geojsonutils -destination "platform=iOS Simulator,OS=latest,name=iPhone 12" -quiet
